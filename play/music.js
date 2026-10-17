@@ -96,8 +96,8 @@
   function startRain() {
     if (rainNode) return; var len = ctx.sampleRate * 3, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0), last = 0;
     for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + .03 * w) / 1.03; d[i] = last * 3; }
-    var src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; var f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 700; var g = ctx.createGain(); g.gain.value = .07;
-    var lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = .08; lg.gain.value = .025; lfo.connect(lg); lg.connect(g.gain);
+    var src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; var f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 450; var g = ctx.createGain(); g.gain.value = .012;
+    var lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = .08; lg.gain.value = .006; lfo.connect(lg); lg.connect(g.gain);
     src.connect(f); f.connect(g); g.connect(master); src.start(); lfo.start();
     rainIv = setInterval(function () { if (!on) return; var n = 1 + Math.floor(Math.random() * 3); for (var k = 0; k < n; k++) { var t = ctx.currentTime + Math.random() * .5, o = ctx.createOscillator(), gg = ctx.createGain(); o.type = 'sine'; o.frequency.value = 1400 + Math.random() * 1800; gg.gain.setValueAtTime(.0001, t); gg.gain.linearRampToValueAtTime(.012, t + .004); gg.gain.exponentialRampToValueAtTime(.0001, t + .07); o.connect(gg); gg.connect(master); o.start(t); o.stop(t + .08); } }, 160);
     rainNode = { src: src, lfo: lfo };
