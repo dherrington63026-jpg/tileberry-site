@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tileberry — coming soon</title><meta name="description" content="Tileberry: a new tile puzzle game from Huezel Games. Coming soon to iPhone and Android.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='22' fill='%23d6336c'/><circle cx='50' cy='52' r='20' fill='%23fff'/></svg>">
+<style>
+:root{color-scheme:light dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{display:grid;place-items:center;padding:24px;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:radial-gradient(120% 90% at 50% 0%,#ffe3ec 0%,#fff6f9 55%,#fff 100%);color:#2b1020;text-align:center}
+@media (prefers-color-scheme:dark){body{background:radial-gradient(120% 90% at 50% 0%,#4a1430 0%,#1c0a14 60%,#12070d 100%);color:#fde7ef}}
+.tiles{display:flex;gap:10px;justify-content:center;margin-bottom:22px}
+.tiles span{width:46px;height:46px;border-radius:12px;box-shadow:0 8px 18px rgba(0,0,0,.18),inset 0 -5px 0 rgba(0,0,0,.12);animation:bob 2.4s ease-in-out infinite}
+.tiles span:nth-child(1){background:#e64980}.tiles span:nth-child(2){background:#f59f00;animation-delay:.15s}.tiles span:nth-child(3){background:#7048e8;animation-delay:.3s}.tiles span:nth-child(4){background:#12b886;animation-delay:.45s}
+@keyframes bob{50%{transform:translateY(-8px)}}
+h1{font-size:clamp(48px,13vw,88px);margin:0;letter-spacing:.02em;font-weight:900}
+p{font-size:20px;opacity:.82;margin:10px 0 26px}
+.soon{display:inline-block;padding:12px 20px;border-radius:999px;border:2px solid currentColor;font-weight:700;opacity:.85}
+footer{margin-top:40px;font-size:14px;opacity:.65}footer a{color:inherit}
+</style></head><body><main>
+<div class="tiles"><span></span><span></span><span></span><span></span></div>
+<h1>Tileberry</h1>
+<p>A fresh tile puzzle game. Coming soon to iPhone and Android.</p>
+<span class="soon">Coming soon</span>
+<footer>From the makers of <a href="https://huezel.com">Huezel</a></footer>
+</main></body></html>
