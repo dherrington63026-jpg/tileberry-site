@@ -75,8 +75,7 @@
       var alive = true, tmr = null;
       function pop() { if (!alive) return; if (on) { var b = ctx.createBuffer(1, 700, ctx.sampleRate), d = b.getChannelData(0); for (var k = 0; k < 700; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / 700, 5); var s2 = ctx.createBufferSource(); s2.buffer = b; var g2 = ctx.createGain(); g2.gain.value = .25 + Math.random() * .3; var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500 + Math.random() * 700; bp.Q.value = 1.5; s2.connect(bp); bp.connect(g2); g2.connect(master); s2.start(); }
         tmr = setTimeout(pop, Math.random() < .08 ? 200 + Math.random() * 300 : 5000 + Math.random() * 9000); }
-      pop();
-      var src2 = ctx.createBufferSource(); src2.buffer = noiseBuf('brown'); src2.loop = true; var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 160; var g3 = ctx.createGain(); g3.gain.value = .035; src2.connect(lp); lp.connect(g3); g3.connect(master); src2.start();
+      var src2 = ctx.createBufferSource(); src2.buffer = noiseBuf('brown'); src2.loop = true; var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 160; var g3 = ctx.createGain(); g3.gain.value = .06; src2.connect(lp); lp.connect(g3); g3.connect(master); src2.start();
       amb.push({ stop: function () { alive = false; clearTimeout(tmr); try { src2.stop(); } catch (e) {} } });
     } else if (kind === 'deep') {
       var srcD = ctx.createBufferSource(); srcD.buffer = noiseBuf('brown'); srcD.loop = true; var lpD = ctx.createBiquadFilter(); lpD.type = 'lowpass'; lpD.frequency.value = 260; var gD = ctx.createGain(); gD.gain.value = .14; var lfoD = ctx.createOscillator(), lgD = ctx.createGain(); lfoD.frequency.value = .07; lgD.gain.value = .05; lfoD.connect(lgD); lgD.connect(gD.gain); srcD.connect(lpD); lpD.connect(gD); gD.connect(master); srcD.start(); lfoD.start();
