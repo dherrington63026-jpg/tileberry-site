@@ -8,5 +8,7 @@ p = os.path.join(dst, 'index.html'); s = open(p, encoding='utf-8').read()
 s = s.replace('<link rel="manifest" href="manifest.json">', '')
 s = s.replace('<title>Tileberry (prototype)</title>', '<title>Tileberry: play free in your browser</title>\n<link rel="icon" href="../icon.svg">')
 s = s.replace('Prototype. A tile is free when', 'A tile is free when')
+import re, time
+s = re.sub(r'<script src="([a-z0-9]+)\.js"></script>', lambda m: '<script src="%s.js?v=%d"></script>' % (m.group(1), int(time.time())), s)
 open(p, 'w', encoding='utf-8').write(s)
 print('synced', len(os.listdir(dst)), 'files')
