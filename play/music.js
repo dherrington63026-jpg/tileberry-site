@@ -1,9 +1,9 @@
 // Tileberry music packs: calm music composed live with the browser's audio (no sound files).
 (function (root) {
   var PACKS = {
-    meadow:   { name: 'Meadow Breeze',   price: 0,    free: true, blurb: 'Soft piano-like notes', bpm: 70, root: 60, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'sine', vol: .05, prog: [[0, 4, 7], [-3, 0, 4], [-5, -1, 2], [-7, -3, 0]] }, mel: { wave: 'triangle', vol: .09, decay: 1.4, density: .5, lo: -5, hi: 14 } },
-    zen:      { name: 'Zen Garden',      price: 1.99, blurb: 'Koto-style plucks, slow and still', bpm: 52, root: 62, scale: [0, 2, 3, 7, 8], beats: 4, drone: true, pad: { wave: 'sine', vol: .035, prog: [[0, 7], [0, 7], [-2, 5], [0, 7]] }, mel: { wave: 'triangle', vol: .11, decay: 1.9, density: .38, lo: 0, hi: 17, pluck: true } },
-    tea:      { name: 'Rainy Tea House', price: 1.99, blurb: 'Gentle rain with warm pads', bpm: 60, root: 57, scale: [0, 3, 5, 7, 10], beats: 4, rain: true, pad: { wave: 'triangle', vol: .045, prog: [[0, 7, 10], [-4, 3, 7], [-2, 5, 9], [-5, 2, 7]] }, mel: { wave: 'sine', vol: .07, decay: 2.2, density: .26, lo: 3, hi: 15 } },
+    meadow:   { name: 'Meadow Breeze',   price: 0,    free: true, calm: true, blurb: 'Soft piano-like notes', bpm: 60, root: 60, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'sine', vol: .05, prog: [[0, 4, 7], [-3, 0, 4], [-5, -1, 2], [-7, -3, 0]] }, mel: { wave: 'sine', vol: .08, decay: 3, density: .5, lo: 0, hi: 9 } },
+    zen:      { name: 'Zen Garden',      price: 1.99, calm: true, blurb: 'Koto-style plucks, slow and still', bpm: 52, root: 62, scale: [0, 2, 3, 7, 8], beats: 4, drone: true, pad: { wave: 'sine', vol: .035, prog: [[0, 7], [0, 7], [-2, 5], [0, 7]] }, mel: { wave: 'sine', vol: .09, decay: 3.2, density: .4, lo: 0, hi: 9 } },
+    tea:      { name: 'Rainy Tea House', price: 1.99, calm: true, blurb: 'Gentle rain with warm pads', bpm: 60, root: 57, scale: [0, 3, 5, 7, 10], beats: 4, rain: true, pad: { wave: 'triangle', vol: .045, prog: [[0, 7, 10], [-4, 3, 7], [-2, 5, 9], [-5, 2, 7]] }, mel: { wave: 'sine', vol: .07, decay: 3.2, density: .4, lo: 0, hi: 9 } },
     lantern:  { name: 'Evening Lanterns', price: 1.99, blurb: 'Warm marimba and glowing chords', bpm: 66, root: 65, scale: [0, 2, 4, 6, 7, 9, 11], beats: 4, pad: { wave: 'triangle', vol: .05, prog: [[0, 4, 7], [2, 6, 9], [4, 7, 11], [-1, 2, 7]] }, mel: { wave: 'sine', vol: .1, decay: .9, density: .55, lo: -2, hi: 12, pluck: true } },
     autumn:   { name: 'Autumn Waltz',    price: 1.99, blurb: 'A gentle waltz in three-four time', bpm: 84, root: 58, scale: [0, 2, 3, 5, 7, 8, 10], beats: 3, pad: { wave: 'sine', vol: .045, prog: [[0, 7, 10], [-4, 3, 7], [-2, 5, 8], [-7, 0, 5]] }, mel: { wave: 'triangle', vol: .09, decay: 1.1, density: .62, lo: 0, hi: 14 } },
     winter:   { name: 'Winter Bells',    price: 2.99, season: { from: '12-01', to: '01-05', label: 'Dec 1 to Jan 5' }, blurb: 'Music-box bells', bpm: 62, root: 72, scale: [0, 2, 4, 7, 9], beats: 4, bell: true, pad: { wave: 'sine', vol: .03, prog: [[0, 7], [-3, 4], [-5, 2], [-7, 0]] }, mel: { wave: 'sine', vol: .08, decay: 2.4, density: .5, lo: 0, hi: 12 } },
@@ -16,19 +16,19 @@
     harvest:  { name: 'Harvest Fiddle',   price: 2.99, season: { from: '11-03', to: '11-30', label: 'Nov 3 to Nov 30' }, blurb: 'Cozy folk plucks for autumn', bpm: 92, root: 57, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'triangle', vol: .045, prog: [[0, 4, 7], [-5, -1, 2], [-3, 0, 4], [-7, -3, 0]] }, mel: { wave: 'triangle', vol: .1, decay: .8, density: .66, lo: 0, hi: 14, pluck: true } },
     sweet:    { name: 'Sweet Waltz',      price: 2.99, season: { from: '02-07', to: '02-15', label: 'Feb 7 to Feb 15' }, blurb: 'A gentle waltz for Valentine day', bpm: 88, root: 60, scale: [0, 2, 4, 5, 7, 9, 11], beats: 3, pad: { wave: 'sine', vol: .05, prog: [[0, 4, 7], [5, 9, 12], [-3, 0, 4], [-5, -1, 2]] }, mel: { wave: 'sine', vol: .09, decay: 1.4, density: .62, lo: 0, hi: 13 } }
   };
-  var ctx = null, master = null, timer = null, nextT = 0, beat = 0, bar = 0, pack = 'meadow', on = false, vol = .9, rainNode = null, noteSeed = 1;
+  var wet = null, curCalm = false, ctx = null, master = null, timer = null, nextT = 0, beat = 0, bar = 0, pack = 'meadow', on = false, vol = .9, rainNode = null, noteSeed = 1;
   function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
   function env(g, t, a, d, v) { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(.0001, t + a + d); }
   function osc(freq, t, dur, wave, v, a, extra) {
     var o = ctx.createOscillator(), g = ctx.createGain(); o.type = wave; o.frequency.setValueAtTime(freq, t);
     if (extra && extra.glide) { o.frequency.setValueAtTime(freq * .94, t); o.frequency.linearRampToValueAtTime(freq, t + .5); var lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 5; lg.gain.value = freq * .012; lfo.connect(lg); lg.connect(o.frequency); lfo.start(t); lfo.stop(t + dur + a); }
-    env(g, t, a, dur, v); o.connect(g); g.connect(master); o.start(t); o.stop(t + a + dur + .05);
+    env(g, t, a, dur, v); o.connect(g); g.connect(master); if (curCalm && wet) g.connect(wet); o.start(t); o.stop(t + a + dur + .05);
   }
   function rnd() { noteSeed = (noteSeed * 1664525 + 1013904223) >>> 0; return noteSeed / 4294967296; }
   var lastDeg = 5;
   function scaleNote(p, deg) { var n = p.scale.length, oct = Math.floor(deg / n), idx = ((deg % n) + n) % n; return p.root + p.scale[idx] + 12 * oct; }
   function schedBeat(t) {
-    var p = PACKS[pack], spb = 60 / p.bpm;
+    var p = PACKS[pack], spb = 60 / p.bpm; curCalm = !!p.calm;
     if (beat === 0) {
       var ch = p.pad.prog[bar % p.pad.prog.length];
       ch.forEach(function (s, i) { osc(hz(p.root + s - 12 + (i ? 0 : 0)), t, spb * p.beats * 1.1, p.pad.wave, p.pad.vol, spb * 1.2); });
@@ -37,7 +37,18 @@
     }
     if (p.heart && (beat === 0 || beat === 2)) { osc(55, t, .25, 'sine', .12, .01); osc(55, t + .18, .22, 'sine', .08, .01); }
     // melody: gentle random walk on the scale, with rests
-    var steps = p.beats === 3 ? [0, .5] : [0, .5];
+    if (p.calm) {
+      if (beat === 0 || beat === 2) {
+        if (rnd() < (beat === 0 ? .75 : .45)) {
+          var r = rnd(); lastDeg = Math.max(p.mel.lo, Math.min(p.mel.hi, lastDeg + (r < .4 ? -1 : r < .8 ? 1 : 0)));
+          var ch2 = p.pad.prog[(bar - 1 + p.pad.prog.length) % p.pad.prog.length].map(function (x) { return ((x % 12) + 12) % 12; });
+          if (beat === 0) for (var d = 0; d < 3; d++) { var cand = [lastDeg + d, lastDeg - d]; var hit = null; cand.forEach(function (c) { var pc = ((scaleNote(p, c) - p.root) % 12 + 12) % 12; if (hit === null && c >= p.mel.lo && c <= p.mel.hi && ch2.indexOf(pc) >= 0) hit = c; }); if (hit !== null) { lastDeg = hit; break; } }
+          osc(hz(scaleNote(p, lastDeg)), t, p.mel.decay, 'sine', p.mel.vol, .05);
+        }
+      }
+      return;
+    }
+    var steps = [0, .5];
     steps.forEach(function (sub) {
       if (rnd() < p.mel.density * (sub ? .7 : 1)) {
         var step = Math.round((rnd() - .5) * 4); lastDeg = Math.max(p.mel.lo, Math.min(p.mel.hi, lastDeg + step)); if (rnd() < .12) lastDeg = Math.round(p.mel.lo + rnd() * (p.mel.hi - p.mel.lo));
@@ -48,7 +59,7 @@
     });
   }
   function tick() {
-    var p = PACKS[pack], spb = 60 / p.bpm;
+    var p = PACKS[pack], spb = 60 / p.bpm; curCalm = !!p.calm;
     while (nextT < ctx.currentTime + .6) { schedBeat(nextT); nextT += spb; beat = (beat + 1) % p.beats; }
   }
 
@@ -69,19 +80,23 @@
     }
   }
   function stopAmb() { amb.forEach(function (a) { a.stop(); }); amb = []; }
+  var rainIv = null;
   function startRain() {
-    if (rainNode) return; var len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0), last = 0;
-    for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + .08 * w) / 1.08; d[i] = last * 3.2; }
-    var src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; var f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2200; f.Q.value = .5; var g = ctx.createGain(); g.gain.value = .5;
-    src.connect(f); f.connect(g); g.connect(master); src.start(); rainNode = { src: src, g: g };
+    if (rainNode) return; var len = ctx.sampleRate * 3, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0), last = 0;
+    for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = (last + .03 * w) / 1.03; d[i] = last * 3; }
+    var src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; var f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 700; var g = ctx.createGain(); g.gain.value = .07;
+    var lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = .08; lg.gain.value = .025; lfo.connect(lg); lg.connect(g.gain);
+    src.connect(f); f.connect(g); g.connect(master); src.start(); lfo.start();
+    rainIv = setInterval(function () { if (!on) return; var n = 1 + Math.floor(Math.random() * 3); for (var k = 0; k < n; k++) { var t = ctx.currentTime + Math.random() * .5, o = ctx.createOscillator(), gg = ctx.createGain(); o.type = 'sine'; o.frequency.value = 1400 + Math.random() * 1800; gg.gain.setValueAtTime(.0001, t); gg.gain.linearRampToValueAtTime(.012, t + .004); gg.gain.exponentialRampToValueAtTime(.0001, t + .07); o.connect(gg); gg.connect(master); o.start(t); o.stop(t + .08); } }, 160);
+    rainNode = { src: src, lfo: lfo };
   }
-  function stopRain() { if (rainNode) { try { rainNode.src.stop(); } catch (e) {} rainNode = null; } }
+  function stopRain() { clearInterval(rainIv); if (rainNode) { try { rainNode.src.stop(); rainNode.lfo.stop(); } catch (e) {} rainNode = null; } }
   var Music = {
     PACKS: PACKS, get on() { return on; }, get pack() { return pack; },
     setPack: function (id) { if (!PACKS[id]) return; pack = id; beat = 0; bar = 0; if (on) { stopRain(); if (PACKS[id].rain) startRain(); startAmb(PACKS[id].amb); } },
     start: function () {
       try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === 'suspended') ctx.resume();
-        if (!master) { master = ctx.createGain(); master.gain.value = vol * .8; master.connect(ctx.destination); }
+        if (!master) { master = ctx.createGain(); master.gain.value = vol * .8; var lpf = ctx.createBiquadFilter(); lpf.type = 'lowpass'; lpf.frequency.value = 4200; master.connect(lpf); lpf.connect(ctx.destination); var cv = ctx.createConvolver(), il = ctx.sampleRate * 3, ib = ctx.createBuffer(2, il, ctx.sampleRate); for (var ch = 0; ch < 2; ch++) { var dd = ib.getChannelData(ch); for (var q = 0; q < il; q++) dd[q] = (Math.random() * 2 - 1) * Math.pow(1 - q / il, 2.5); } cv.buffer = ib; wet = ctx.createGain(); wet.gain.value = .5; wet.connect(cv); cv.connect(lpf); }
         on = true; nextT = ctx.currentTime + .1; beat = 0; if (PACKS[pack].rain) startRain(); startAmb(PACKS[pack].amb); clearInterval(timer); timer = setInterval(tick, 120); tick();
       } catch (e) { on = false; }
     },
