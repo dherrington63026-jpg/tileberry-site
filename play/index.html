@@ -183,13 +183,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792202483"></script>
-<script src="fx.js?v=1792202483"></script>
-<script src="scenery.js?v=1792202483"></script>
-<script src="scenery2.js?v=1792202483"></script>
-<script src="faces.js?v=1792202483"></script>
-<script src="states.js?v=1792202483"></script>
-<script src="music.js?v=1792202483"></script>
+<script src="engine.js?v=1792202909"></script>
+<script src="fx.js?v=1792202909"></script>
+<script src="scenery.js?v=1792202909"></script>
+<script src="scenery2.js?v=1792202909"></script>
+<script src="faces.js?v=1792202909"></script>
+<script src="states.js?v=1792202909"></script>
+<script src="music.js?v=1792202909"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -407,7 +407,7 @@
   var FACE_ITEMS = { classic: { name: 'Classic Mahjong', price: 0, free: true, blurb: 'The 34 traditional tiles' }, states: { name: 'US States', price: 2.99, blurb: 'All 50 state shapes' }, animals: { name: 'Cute Animals', price: 2.99, blurb: '24 friendly faces' }, flags: { name: 'World Flags', price: 2.99, blurb: '30 flags from around the world' }, landmarks: { name: 'Famous Places', price: 2.99, blurb: '20 landmarks with names' } };
   var TBL = function (k) { return k === 'bg' ? MMS.BACKGROUNDS : k === 'tiles' ? MMS.TILES : k === 'faces' ? FACE_ITEMS : MMusic.PACKS; };
   if (!TBL('bg')[cur.bg]) cur.bg = 'meadow'; if (!TBL('tiles')[cur.tiles]) cur.tiles = 'classic'; if (!TBL('music')[cur.music]) cur.music = 'meadow'; if (!FACE_ITEMS[cur.faces]) cur.faces = 'classic';
-  function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || own[k + ':' + id]); }
+  function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || (typeof QALL !== 'undefined' && QALL) || own[k + ':' + id]); }
   function applyBg(id) {
     var b = MMS.BACKGROUNDS[id];
     $('scene').style.backgroundImage = MMS.svgUrl(MMS.SCENES[id]);
@@ -472,12 +472,20 @@
   $('tabShop').onclick = showShop;
   // tester shortcut: tap the logo 7 times to unlock everything on this device
   (function () { var n = 0, t; document.querySelector('.logo').onclick = function () { n++; clearTimeout(t); t = setTimeout(function () { n = 0; }, 1500); if (n >= 7) { n = 0; own.all = true; store.set('own', own); $('msg').textContent = 'Tester: everything unlocked on this device.'; if (!$('shopPane').classList.contains('hidden')) renderShop(); } }; })();
+  // ad / screenshot helper: ?level=N  ?layout=pyramid[&seed=3]  ?daily=YYYY-MM-DD  ?bg=id  ?tiles=id  ?faces=id  ?music=id  ?clean=1 (hides the how-to-play box)  ?big=1
+  var Q = {}; location.search.replace(/[?&](\w+)=([^&]*)/g, function (m, a, b) { Q[a] = decodeURIComponent(b); });
+  if (Q.bg && MMS.BACKGROUNDS[Q.bg]) cur.bg = Q.bg; if (Q.tiles && MMS.TILES[Q.tiles]) cur.tiles = Q.tiles; if (Q.faces && FACE_ITEMS[Q.faces]) cur.faces = Q.faces; if (Q.music && MMusic.PACKS[Q.music]) cur.music = Q.music;
+  var QALL = !!(Q.bg || Q.tiles || Q.faces || Q.music); if (Q.big) big = Q.big === '1';
   if (window.FX) FX.init();
   applyAll(); updateChip();
   $('tabDaily').onclick = showDaily; $('tabLevels').onclick = showLevels;
   addEventListener('resize', function () { if (G && !$('play').classList.contains('hidden')) render(); });
   showStreak();
-  if (!store.get('tut', 0)) { $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(levelSpec(0)); } else showDaily();
+  if (Q.level || Q.layout || Q.daily) {
+    var qs2 = Q.layout && MJ.LAYOUTS[Q.layout] ? { layout: Q.layout, seed: MJ.hashStr('shot-' + (Q.seed || 1)), copies: 4, id: 'shot-' + Q.layout, title: MJ.LAYOUTS[Q.layout].name } : Q.daily ? dailySpec(Q.daily) : levelSpec(Math.max(0, (parseInt(Q.level, 10) || 1) - 1));
+    $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(qs2);
+  } else if (!store.get('tut', 0)) { $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(levelSpec(0)); } else showDaily();
+  if (Q.clean) $('cap').classList.add('hidden');
   window.__mm = { MJ: MJ, get g() { return G; }, tap: tap, els: function () { return els; }, levelSpec: levelSpec, start: start };
 })();
 </script>
