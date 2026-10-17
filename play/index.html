@@ -73,7 +73,7 @@
   .club { margin-top:10px; padding:16px; border-radius:22px; background:linear-gradient(150deg,#fff8e0,#ffe9a8); border:2px solid #f2d46b; box-shadow:0 10px 22px rgba(120,90,10,.18); }
   .club h3 { margin:0 0 4px; font-size:21px; font-weight:900; color:#7a5a05; }
   .club p { margin:0 0 10px; font-size:14px; font-weight:700; color:#6d5a2a; line-height:1.4; }
-  .club .plans { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .club .plans { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
   .club .plan { border:0; border-radius:14px; padding:10px 4px; background:#fff; font:inherit; font-weight:900; font-size:13px; color:#5e4a0a; cursor:pointer; box-shadow:0 4px 0 rgba(120,90,10,.2); }
   .club .plan small { display:block; font-weight:800; opacity:.75; font-size:11.5px; margin-top:2px; }
   .club .plan.best { background:linear-gradient(135deg,#ffd45e,#f2b632); box-shadow:0 4px 0 #b88a12; }
@@ -168,8 +168,8 @@
 </div>
 <div id="shopPane" class="hidden">
   <div class="club"><h3 id="clubHead">🌿 Tileberry Club</h3><p>Every scenery, tile set and music pack, and Tileberry is updated often with new music, themes and scenery. The game itself always stays free, with no ads.</p>
-    <div class="plans"><button class="plan" data-id="club-monthly">Monthly<small>$2.99</small></button><button class="plan best" data-id="club-yearly">Yearly<small>$19.99 · save 44%</small></button><button class="plan" data-id="club-lifetime">Lifetime<small>$24.99 once</small></button></div>
-    <div id="clubFine" style="display:none;font-size:11.5px;line-height:1.45;margin-top:10px;color:#6d5a2a;font-weight:600">Club Monthly ($2.99) and Yearly ($19.99) renew automatically unless cancelled at least 24 hours before the period ends. Payment is charged to your Apple ID or Google Play account. Manage or cancel any time in your App Store or Google Play account settings. Lifetime is a one-time purchase. <a href="privacy.html" style="color:#7a3fb8">Privacy Policy</a> · <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" style="color:#7a3fb8">Terms of Use</a></div></div>
+    <div class="plans"><button class="plan" data-id="club-monthly">Monthly<small>$2.99</small></button><button class="plan best" data-id="club-yearly">Yearly<small>$19.99 · save 44%</small></button></div>
+    <div id="clubFine" style="display:none;font-size:11.5px;line-height:1.45;margin-top:10px;color:#6d5a2a;font-weight:600">Club Monthly ($2.99) and Yearly ($19.99) renew automatically unless cancelled at least 24 hours before the period ends. Payment is charged to your Apple ID or Google Play account. Manage or cancel any time in your App Store or Google Play account settings. <a href="privacy.html" style="color:#7a3fb8">Privacy Policy</a> · <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" style="color:#7a3fb8">Terms of Use</a></div></div>
   <div style="text-align:center;margin:8px 0"><button class="sbtn prev" id="restoreBtn" style="display:none;padding:9px 16px">Restore purchases</button></div>
   <div class="shoptabs" id="shopTabs"><button data-k="bg" class="on">Scenery</button><button data-k="faces">Tile art</button><button data-k="tiles">Style</button><button data-k="music">Music</button></div>
   <div class="shopgrid" id="shopGrid"></div>
@@ -185,13 +185,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792207344"></script>
-<script src="fx.js?v=1792207344"></script>
-<script src="scenery.js?v=1792207344"></script>
-<script src="scenery2.js?v=1792207344"></script>
-<script src="faces.js?v=1792207344"></script>
-<script src="states.js?v=1792207344"></script>
-<script src="music.js?v=1792207344"></script>
+<script src="engine.js?v=1792207459"></script>
+<script src="fx.js?v=1792207459"></script>
+<script src="scenery.js?v=1792207459"></script>
+<script src="scenery2.js?v=1792207459"></script>
+<script src="faces.js?v=1792207459"></script>
+<script src="states.js?v=1792207459"></script>
+<script src="music.js?v=1792207459"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -438,7 +438,7 @@
   function renderShop() {
     var grid = $('shopGrid'); grid.innerHTML = '';
     $('clubHead').textContent = clubOn() ? '🌿 You are in Tileberry Club ✓' : '🌿 Tileberry Club';
-    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%'], ['club-lifetime', 'Lifetime', '$24.99 once']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[pidOf(p[0])] ? prices[pidOf(p[0])] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
+    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[pidOf(p[0])] ? prices[pidOf(p[0])] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
     $('clubFine').style.display = live ? '' : 'none'; $('restoreBtn').style.display = live ? '' : 'none';
     Array.prototype.forEach.call($('shopTabs').children, function (b) { b.classList.toggle('on', b.dataset.k === shopKind); });
     var k = shopKind, tbl = TBL(k), now = new Date();
