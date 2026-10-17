@@ -1,23 +1,69 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tileberry — coming soon</title><meta name="description" content="Tileberry: a new tile puzzle game from Huezel Games. Coming soon to iPhone and Android.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='22' fill='%23d6336c'/><circle cx='50' cy='52' r='20' fill='%23fff'/></svg>">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tileberry: calm tile matching, no ads</title>
+<meta name="description" content="Tileberry is a calm tile-matching game with big tiles, daily boards, beautiful scenery and music. Free to play with no ads, ever.">
+<link rel="icon" href="icon.svg">
 <style>
-:root{color-scheme:light dark}
-*{box-sizing:border-box}html,body{margin:0;height:100%}
-body{display:grid;place-items:center;padding:24px;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:radial-gradient(120% 90% at 50% 0%,#ffe3ec 0%,#fff6f9 55%,#fff 100%);color:#2b1020;text-align:center}
-@media (prefers-color-scheme:dark){body{background:radial-gradient(120% 90% at 50% 0%,#4a1430 0%,#1c0a14 60%,#12070d 100%);color:#fde7ef}}
-.tiles{display:flex;gap:10px;justify-content:center;margin-bottom:22px}
-.tiles span{width:46px;height:46px;border-radius:12px;box-shadow:0 8px 18px rgba(0,0,0,.18),inset 0 -5px 0 rgba(0,0,0,.12);animation:bob 2.4s ease-in-out infinite}
-.tiles span:nth-child(1){background:#e64980}.tiles span:nth-child(2){background:#f59f00;animation-delay:.15s}.tiles span:nth-child(3){background:#7048e8;animation-delay:.3s}.tiles span:nth-child(4){background:#12b886;animation-delay:.45s}
-@keyframes bob{50%{transform:translateY(-8px)}}
-h1{font-size:clamp(48px,13vw,88px);margin:0;letter-spacing:.02em;font-weight:900}
-p{font-size:20px;opacity:.82;margin:10px 0 26px}
-.soon{display:inline-block;padding:12px 20px;border-radius:999px;border:2px solid currentColor;font-weight:700;opacity:.85}
-footer{margin-top:40px;font-size:14px;opacity:.65}footer a{color:inherit}
-</style></head><body><main>
-<div class="tiles"><span></span><span></span><span></span><span></span></div>
-<h1>Tileberry</h1>
-<p>A fresh tile puzzle game. Coming soon to iPhone and Android.</p>
-<span class="soon">Coming soon</span>
-<footer>From the makers of <a href="https://huezel.com">Huezel</a></footer>
-</main></body></html>
+  :root { --ink:#3a2a4a; --ink2:#6f5f80; --berry:#d6366c; --plum:#7a3fb8; --leaf:#3fa05a; --cream:#fff8ee; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,sans-serif; color:var(--ink); background:linear-gradient(180deg,#fff0f6 0%,#f6efff 45%,#eaf6ef 100%); line-height:1.6; }
+  .wrap { max-width:880px; margin:0 auto; padding:0 20px; }
+  header { padding:22px 0 0; display:flex; align-items:center; gap:12px; }
+  header img { width:44px; height:44px; border-radius:12px; box-shadow:0 6px 16px rgba(122,63,184,.35); }
+  header b { font-size:22px; letter-spacing:-.3px; }
+  header nav { margin-left:auto; display:flex; gap:18px; font-weight:700; font-size:15px; }
+  header nav a { color:var(--ink2); text-decoration:none; }
+  .hero { text-align:center; padding:54px 0 36px; }
+  .hero img { width:132px; height:132px; border-radius:30px; box-shadow:0 18px 40px rgba(122,63,184,.4); }
+  h1 { font-size:clamp(36px,7vw,60px); line-height:1.05; margin:22px 0 10px; letter-spacing:-1.2px; background:linear-gradient(90deg,var(--berry),var(--plum)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .lead { font-size:clamp(18px,3.2vw,22px); color:var(--ink2); max-width:600px; margin:0 auto 26px; }
+  .btn { display:inline-block; padding:15px 28px; border-radius:16px; font-weight:800; font-size:18px; text-decoration:none; color:#fff; background:linear-gradient(135deg,var(--berry),var(--plum)); box-shadow:0 8px 0 rgba(90,30,120,.25), 0 14px 28px rgba(122,63,184,.3); }
+  .soon { margin-top:16px; font-weight:700; color:var(--ink2); font-size:15px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin:34px 0; }
+  .card { background:rgba(255,255,255,.86); border-radius:22px; padding:22px; box-shadow:0 10px 26px rgba(90,60,120,.12); }
+  .card h3 { margin:0 0 6px; font-size:19px; }
+  .card p { margin:0; color:var(--ink2); font-size:15.5px; }
+  .em { font-size:30px; display:block; margin-bottom:6px; }
+  h2 { font-size:28px; margin:44px 0 6px; text-align:center; }
+  .sub { text-align:center; color:var(--ink2); margin:0 auto 18px; max-width:560px; }
+  .pills { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0 6px; }
+  .pills span { background:#fff; border-radius:999px; padding:7px 14px; font-weight:700; font-size:14px; box-shadow:0 3px 10px rgba(90,60,120,.1); }
+  footer { text-align:center; color:var(--ink2); font-size:14px; padding:40px 0 50px; }
+  footer a { color:var(--plum); font-weight:700; text-decoration:none; margin:0 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="icon.svg" alt=""><b>Tileberry</b><nav><a href="play/">Play</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a></nav></header>
+
+  <section class="hero">
+    <img src="icon.svg" alt="Tileberry icon">
+    <h1>Calm tile matching.<br>No ads. Ever.</h1>
+    <p class="lead">Match free pairs on big, easy-to-read tiles. A new board every day, beautiful scenery, relaxing music, and nothing interrupting you while you play.</p>
+    <a class="btn" href="play/">Play free in your browser</a>
+    <div class="soon">iPhone and Android apps are coming soon.</div>
+  </section>
+
+  <div class="grid">
+    <div class="card"><span class="em">🚫</span><h3>No ads, no pop-ups</h3><p>The game is free and always will be. We never put an ad in front of you, and there are no lives, timers or energy to wait for.</p></div>
+    <div class="card"><span class="em">🔍</span><h3>Big, clear tiles</h3><p>Boards are sized so tiles are easy to see and tap. Bright tiles are free to match, dim ones are boxed in.</p></div>
+    <div class="card"><span class="em">✅</span><h3>Every board can be won</h3><p>Each board is built to be solvable. If you run out of matches, a free shuffle gives you a fresh winnable layout.</p></div>
+    <div class="card"><span class="em">📅</span><h3>A new board every day</h3><p>Keep a streak going with the daily board, or work through levels that start gentle and grow.</p></div>
+  </div>
+
+  <h2>Make it yours</h2>
+  <p class="sub">Optional extras to decorate your game. Everything you need to play is free.</p>
+  <div class="pills">
+    <span>🗺️ All 50 US states</span><span>🌍 World flags</span><span>🐼 Cute animals</span><span>🗼 Famous places</span><span>🌸 16 scenic backgrounds</span><span>🎵 14 music packs</span><span>💎 12 tile styles</span><span>🎃 Seasonal themes</span>
+  </div>
+
+  <footer>
+    <a href="play/">Play</a><a href="support.html">Support</a><a href="privacy.html">Privacy Policy</a>
+    <p>© Tileberry. Made with care.</p>
+  </footer>
+</div>
+</body>
+</html>
