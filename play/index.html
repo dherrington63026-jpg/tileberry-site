@@ -79,7 +79,7 @@
   .club .plan.best { background:linear-gradient(135deg,#ffd45e,#f2b632); box-shadow:0 4px 0 #b88a12; }
   .shoptabs { display:flex; gap:6px; margin:14px 0 4px; }
   .shoptabs button { flex:1; border:0; border-radius:12px; padding:10px 4px; background:rgba(255,255,255,.7); font:inherit; font-weight:800; font-size:14px; color:var(--ink2); cursor:pointer; }
-  .shoptabs button.on { background:linear-gradient(135deg,#59b176,#3f8f5b); color:#fff; }
+  .shoptabs button.on { background:linear-gradient(135deg,#e0558f,#8a45c4); color:#fff; }
   .shopgrid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:8px; }
   .scard { background:#fff; border-radius:20px; padding:10px; box-shadow:0 5px 0 rgba(40,90,60,.14), 0 10px 20px rgba(40,90,60,.1); text-align:center; border:2px solid transparent; position:relative; }
   .scard.on { border-color:#3f9d63; }
@@ -93,7 +93,7 @@
   .note { font-size:38px; }
   .sbtns { display:flex; gap:6px; margin-top:8px; }
   .sbtn { flex:1; border:0; border-radius:12px; padding:9px 4px; font:inherit; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.13); }
-  .sbtn.prev { background:#eaf5ee; color:#2f6e48; } .sbtn.buy { background:linear-gradient(135deg,#ff9a55,#ee6a3a); color:#fff; } .sbtn.use { background:linear-gradient(135deg,#59b176,#3f8f5b); color:#fff; } .sbtn.dis { background:#d8ddd9; color:#7a857e; pointer-events:none; }
+  .sbtn.prev { background:#f1eaf8; color:#7a3fb8; } .sbtn.buy { background:linear-gradient(135deg,#ff9a55,#ee6a3a); color:#fff; } .sbtn.use { background:linear-gradient(135deg,#e0558f,#8a45c4); color:#fff; } .sbtn.dis { background:#d8ddd9; color:#7a857e; pointer-events:none; }
   #prevBar { position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 12px); z-index:25; max-width:536px; margin:0 auto; background:#2c3e33; color:#fff; border-radius:18px; padding:12px 14px; display:flex; align-items:center; gap:8px; box-shadow:0 12px 30px rgba(0,0,0,.4); font-weight:800; font-size:14px; }
   #prevBar.hidden { display:none; }
   #prevBar span { flex:1; min-width:0; } #prevBar button { border:0; border-radius:11px; padding:9px 12px; font:inherit; font-weight:900; font-size:13px; cursor:pointer; }
@@ -167,7 +167,7 @@
   <div class="msg" id="msg"></div>
 </div>
 <div id="shopPane" class="hidden">
-  <div class="club"><h3 id="clubHead">🌿 Tileberry Club</h3><p>Every scenery, tile set and music pack, plus a brand-new scenery and song every month. The game itself always stays free, with no ads.</p>
+  <div class="club"><h3 id="clubHead">🌿 Tileberry Club</h3><p>Every scenery, tile set and music pack, and Tileberry is updated often with new music, themes and scenery. The game itself always stays free, with no ads.</p>
     <div class="plans"><button class="plan" data-id="club-monthly">Monthly<small>$2.99</small></button><button class="plan best" data-id="club-yearly">Yearly<small>$19.99 · save 44%</small></button><button class="plan" data-id="club-lifetime">Lifetime<small>$24.99 once</small></button></div>
     <div id="clubFine" style="display:none;font-size:11.5px;line-height:1.45;margin-top:10px;color:#6d5a2a;font-weight:600">Club Monthly ($2.99) and Yearly ($19.99) renew automatically unless cancelled at least 24 hours before the period ends. Payment is charged to your Apple ID or Google Play account. Manage or cancel any time in your App Store or Google Play account settings. Lifetime is a one-time purchase. <a href="privacy.html" style="color:#7a3fb8">Privacy Policy</a> · <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" style="color:#7a3fb8">Terms of Use</a></div></div>
   <div style="text-align:center;margin:8px 0"><button class="sbtn prev" id="restoreBtn" style="display:none;padding:9px 16px">Restore purchases</button></div>
@@ -185,13 +185,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792205970"></script>
-<script src="fx.js?v=1792205970"></script>
-<script src="scenery.js?v=1792205970"></script>
-<script src="scenery2.js?v=1792205970"></script>
-<script src="faces.js?v=1792205970"></script>
-<script src="states.js?v=1792205970"></script>
-<script src="music.js?v=1792205970"></script>
+<script src="engine.js?v=1792207344"></script>
+<script src="fx.js?v=1792207344"></script>
+<script src="scenery.js?v=1792207344"></script>
+<script src="scenery2.js?v=1792207344"></script>
+<script src="faces.js?v=1792207344"></script>
+<script src="states.js?v=1792207344"></script>
+<script src="music.js?v=1792207344"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -534,6 +534,7 @@
     $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(qs2);
   } else if (!store.get('tut', 0)) { $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(levelSpec(0)); } else showDaily();
   if (Q.clean) $('cap').classList.add('hidden');
+  if (Q.tab === 'shop') { if (Q.shopk && TBL(Q.shopk)) shopKind = Q.shopk; showShop(); } else if (Q.tab === 'daily') showDaily();
   window.__mm = { MJ: MJ, get g() { return G; }, tap: tap, els: function () { return els; }, levelSpec: levelSpec, start: start };
 })();
 </script>
