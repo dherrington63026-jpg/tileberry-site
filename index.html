@@ -7,34 +7,33 @@
 <meta name="description" content="Tileberry is a calm tile-matching game with big tiles, daily boards, beautiful scenery and music. Free to play with no ads, ever.">
 <link rel="icon" href="icon.svg">
 <style>
-  :root { --ink:#2c3e33; --ink2:#5d7566; --berry:#d6366c; --plum:#2d7a4c; --leaf:#3f8f5b; --cream:#fff8ee; }
+  :root { --ink:#3a2a4a; --ink2:#6f5f80; --berry:#d6366c; --plum:#7a3fb8; --leaf:#3fa05a; --cream:#fff8ee; }
   * { box-sizing:border-box; }
-  body { margin:0; font-family:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,sans-serif; color:var(--ink); background:linear-gradient(180deg,#bfe0fa 0%,#d9efff 40%,#cfeeda 100%) fixed; line-height:1.6; }
-  img{max-width:100%}
+  body { margin:0; font-family:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,sans-serif; color:var(--ink); background:linear-gradient(180deg,#fff0f6 0%,#f6efff 45%,#eaf6ef 100%); line-height:1.6; }
   .wrap { max-width:880px; margin:0 auto; padding:0 20px; }
   header { padding:22px 0 0; display:flex; align-items:center; gap:12px; }
-  header img { width:44px; height:44px; border-radius:12px; box-shadow:0 6px 16px rgba(63,143,91,.4); }
+  header img { width:44px; height:44px; border-radius:12px; box-shadow:0 6px 16px rgba(122,63,184,.35); }
   header b { font-size:22px; letter-spacing:-.3px; }
   header nav { margin-left:auto; display:flex; gap:18px; font-weight:700; font-size:15px; }
   header nav a { color:var(--ink2); text-decoration:none; }
   .hero { text-align:center; padding:54px 0 36px; }
-  .shot { display:block; width:min(300px,78vw); margin:34px auto 0; border-radius:26px; border:6px solid #fff; box-shadow:0 22px 50px rgba(40,90,70,.35); }
-  .hero .ic { width:132px; height:132px; border-radius:30px; box-shadow:0 18px 40px rgba(63,143,91,.45); }
-  h1 { font-size:clamp(36px,7vw,60px); line-height:1.05; margin:22px 0 10px; letter-spacing:-1.2px; background:linear-gradient(90deg,#3f8f5b,#2d7a4c); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .shot { display:block; width:min(300px,78vw); margin:34px auto 0; border-radius:26px; border:6px solid #fff; box-shadow:0 22px 50px rgba(122,63,184,.35); }
+  .hero .ic { width:132px; height:132px; border-radius:30px; box-shadow:0 18px 40px rgba(122,63,184,.4); }
+  h1 { font-size:clamp(36px,7vw,60px); line-height:1.05; margin:22px 0 10px; letter-spacing:-1.2px; background:linear-gradient(90deg,var(--berry),var(--plum)); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .lead { font-size:clamp(18px,3.2vw,22px); color:var(--ink2); max-width:600px; margin:0 auto 26px; }
-  .btn { display:inline-block; padding:15px 28px; border-radius:16px; font-weight:800; font-size:18px; text-decoration:none; color:#fff; background:linear-gradient(180deg,#5fb27c,#3f8f5b); box-shadow:0 6px 0 #2d7a4c, 0 14px 26px rgba(45,122,76,.35), inset 0 2px 0 rgba(255,255,255,.4); }
+  .btn { display:inline-block; padding:15px 28px; border-radius:16px; font-weight:800; font-size:18px; text-decoration:none; color:#fff; background:linear-gradient(135deg,var(--berry),var(--plum)); box-shadow:0 8px 0 rgba(90,30,120,.25), 0 14px 28px rgba(122,63,184,.3); }
   .soon { margin-top:16px; font-weight:700; color:var(--ink2); font-size:15px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin:34px 0; }
-  .card { background:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.9); backdrop-filter:blur(8px); border-radius:22px; padding:22px; box-shadow:0 10px 26px rgba(40,90,70,.14); }
+  .card { background:rgba(255,255,255,.86); border-radius:22px; padding:22px; box-shadow:0 10px 26px rgba(90,60,120,.12); }
   .card h3 { margin:0 0 6px; font-size:19px; }
   .card p { margin:0; color:var(--ink2); font-size:15.5px; }
   .em { font-size:30px; display:block; margin-bottom:6px; }
   h2 { font-size:28px; margin:44px 0 6px; text-align:center; }
   .sub { text-align:center; color:var(--ink2); margin:0 auto 18px; max-width:560px; }
   .pills { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0 6px; }
-  .pills span { background:#fff; border-radius:999px; padding:7px 14px; font-weight:700; font-size:14px; box-shadow:0 3px 10px rgba(40,90,70,.12); }
+  .pills span { background:#fff; border-radius:999px; padding:7px 14px; font-weight:700; font-size:14px; box-shadow:0 3px 10px rgba(90,60,120,.1); }
   footer { text-align:center; color:var(--ink2); font-size:14px; padding:40px 0 50px; }
-  footer a { color:#2d7a4c; font-weight:700; text-decoration:none; margin:0 8px; }
+  footer a { color:var(--plum); font-weight:700; text-decoration:none; margin:0 8px; }
 </style>
 </head>
 <body>
@@ -60,7 +59,7 @@
   <h2>Make it yours</h2>
   <p class="sub">Optional extras to decorate your game. Everything you need to play is free.</p>
   <div class="pills">
-    <span>🗺️ All 50 US states</span><span>🌍 World flags</span><span>🐼 Cute animals</span><span>🗼 Famous places</span><span>🌸 16 scenic backgrounds</span><span>🎵 14 music packs</span><span>💎 12 tile styles</span><span>🎃 Seasonal themes</span>
+    <span>🗺️ All 50 US states</span><span>🌍 World flags</span><span>🐼 Cute animals</span><span>🗼 Famous places</span><span>🌸 16 scenic backgrounds</span><span>🎵 15 music packs</span><span>💎 12 tile styles</span><span>🎃 Seasonal themes</span>
   </div>
 
   <footer>

@@ -2,22 +2,23 @@
 (function (root) {
   var PACKS = {
     meadow:   { name: 'Meadow Breeze',   price: 0,    free: true, calm: true, blurb: 'Soft piano-like notes', bpm: 60, root: 60, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'sine', vol: .05, prog: [[0, 4, 7], [-3, 0, 4], [-5, -1, 2], [-7, -3, 0]] }, mel: { wave: 'sine', vol: .08, decay: 3, density: .5, lo: 0, hi: 9 } },
+    piano:    { name: 'Calm Piano',       price: 2.99, tracks: ['piano1', 'piano2', 'piano3', 'piano4', 'piano5'], blurb: 'Real piano: Satie and Debussy', bpm: 60, root: 60, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'sine', vol: 0, prog: [[0]] }, mel: { wave: 'sine', vol: 0, decay: 1, density: 0, lo: 0, hi: 5 } },
     zen:      { name: 'Zen Garden',      price: 1.99, calm: true, blurb: 'Koto-style plucks, slow and still', bpm: 52, root: 62, scale: [0, 2, 3, 7, 8], beats: 4, drone: true, pad: { wave: 'sine', vol: .035, prog: [[0, 7], [0, 7], [-2, 5], [0, 7]] }, mel: { wave: 'sine', vol: .09, decay: 3.2, density: .4, lo: 0, hi: 9 } },
-    tea:      { name: 'Rainy Tea House', price: 1.99, calm: true, blurb: 'Gentle rain with warm pads', bpm: 60, root: 57, scale: [0, 3, 5, 7, 10], beats: 4, rain: true, pad: { wave: 'triangle', vol: .045, prog: [[0, 7, 10], [-4, 3, 7], [-2, 5, 9], [-5, 2, 7]] }, mel: { wave: 'sine', vol: .07, decay: 3.2, density: .4, lo: 0, hi: 9 } },
+    tea:      { name: 'Rainy Tea House', price: 1.99, calm: true, real: { file: 'rain', vol: .5 }, blurb: 'Gentle rain with warm pads', bpm: 60, root: 57, scale: [0, 3, 5, 7, 10], beats: 4, pad: { wave: 'triangle', vol: .05, prog: [[0, 7, 10], [-4, 3, 7], [-2, 5, 9], [-5, 2, 7]] }, mel: { wave: 'sine', vol: .07, decay: 3.2, density: .4, lo: 0, hi: 9 } },
     lantern:  { name: 'Evening Lanterns', price: 1.99, blurb: 'Warm marimba and glowing chords', bpm: 66, root: 65, scale: [0, 2, 4, 6, 7, 9, 11], beats: 4, pad: { wave: 'triangle', vol: .05, prog: [[0, 4, 7], [2, 6, 9], [4, 7, 11], [-1, 2, 7]] }, mel: { wave: 'sine', vol: .1, decay: .9, density: .55, lo: -2, hi: 12, pluck: true } },
     autumn:   { name: 'Autumn Waltz',    price: 1.99, blurb: 'A gentle waltz in three-four time', bpm: 84, root: 58, scale: [0, 2, 3, 5, 7, 8, 10], beats: 3, pad: { wave: 'sine', vol: .045, prog: [[0, 7, 10], [-4, 3, 7], [-2, 5, 8], [-7, 0, 5]] }, mel: { wave: 'triangle', vol: .09, decay: 1.1, density: .62, lo: 0, hi: 14 } },
     winter:   { name: 'Winter Bells',    price: 2.99, season: { from: '12-01', to: '01-05', label: 'Dec 1 to Jan 5' }, blurb: 'Music-box bells', bpm: 62, root: 72, scale: [0, 2, 4, 7, 9], beats: 4, bell: true, pad: { wave: 'sine', vol: .03, prog: [[0, 7], [-3, 4], [-5, 2], [-7, 0]] }, mel: { wave: 'sine', vol: .08, decay: 2.4, density: .5, lo: 0, hi: 12 } },
     spooky:   { name: 'Spooky Hollow',   price: 2.99, season: { from: '10-17', to: '11-02', label: 'Oct 17 to Nov 2' }, blurb: 'Slow, eerie and fun', bpm: 54, root: 52, scale: [0, 1, 3, 5, 7, 8, 11], beats: 4, heart: true, pad: { wave: 'sine', vol: .05, prog: [[0, 3, 7], [-4, 0, 3], [-2, 1, 5], [-5, -1, 2]] }, mel: { wave: 'sine', vol: .07, decay: 2.6, density: .3, lo: 5, hi: 17, glide: true } },
-    beach:    { name: 'Beach Day',        price: 1.99, blurb: 'Steel-drum feel with ocean waves', bpm: 78, root: 62, scale: [0, 2, 4, 7, 9], beats: 4, amb: 'waves', pad: { wave: 'triangle', vol: .04, prog: [[0, 4, 7], [-3, 0, 4], [-5, -1, 2], [0, 4, 9]] }, mel: { wave: 'triangle', vol: .1, decay: .7, density: .6, lo: 0, hi: 14, pluck: true } },
-    fireside: { name: 'By the Fireside',  price: 1.99, blurb: 'Warm low chords and a crackling fire', bpm: 56, root: 53, scale: [0, 2, 4, 5, 7, 9, 11], beats: 4, amb: 'crackle', pad: { wave: 'triangle', vol: .06, prog: [[0, 4, 7], [-5, -1, 2], [-3, 0, 4], [-7, -3, 0]] }, mel: { wave: 'sine', vol: .07, decay: 2.4, density: .24, lo: 2, hi: 12 } },
+    beach:    { name: 'Beach Day',        price: 1.99, real: { file: 'beach', vol: .4 }, blurb: 'Steel-drum feel with ocean waves', bpm: 78, root: 62, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'triangle', vol: .04, prog: [[0, 4, 7], [-3, 0, 4], [-5, -1, 2], [0, 4, 9]] }, mel: { wave: 'triangle', vol: .1, decay: .7, density: .6, lo: 0, hi: 14, pluck: true } },
+    fireside: { name: 'By the Fireside',  price: 1.99, real: { file: 'fire', vol: 1.6 }, blurb: 'Warm low chords and a crackling fire', bpm: 56, root: 53, scale: [0, 2, 4, 5, 7, 9, 11], beats: 4, pad: { wave: 'triangle', vol: .06, prog: [[0, 4, 7], [-5, -1, 2], [-3, 0, 4], [-7, -3, 0]] }, mel: { wave: 'sine', vol: .07, decay: 2.4, density: .24, lo: 2, hi: 12 } },
     lullaby:  { name: 'Lullaby',          price: 1.99, blurb: 'A soft music-box lullaby', bpm: 76, root: 72, scale: [0, 2, 4, 5, 7, 9], beats: 3, bell: true, pad: { wave: 'sine', vol: .028, prog: [[0, 7], [-3, 4], [-5, 2], [0, 7]] }, mel: { wave: 'sine', vol: .075, decay: 2.2, density: .6, lo: 0, hi: 10 } },
     sunrise:  { name: 'Sunrise Birds',    price: 1.99, blurb: 'Bright morning chords and birdsong', bpm: 68, root: 64, scale: [0, 2, 4, 7, 9], beats: 4, amb: 'birds', pad: { wave: 'sine', vol: .05, prog: [[0, 4, 7], [5, 9, 12], [7, 11, 14], [0, 4, 9]] }, mel: { wave: 'triangle', vol: .08, decay: 1.5, density: .42, lo: 2, hi: 16 } },
-    ocean:    { name: 'Beach Waves',      price: 1.99, blurb: 'Soft waves rolling onto the shore', bpm: 48, root: 55, scale: [0, 2, 5, 7, 9], beats: 4, amb: 'waves', pad: { wave: 'sine', vol: .06, prog: [[0, 7, 9], [-3, 2, 7], [-5, 0, 5], [-7, -2, 2]] }, mel: { wave: 'sine', vol: .06, decay: 3, density: .2, lo: 4, hi: 16 } },
-    deep:     { name: 'Deep Ocean',       price: 1.99, calm: true, blurb: 'Whale songs, dolphins and deep water', bpm: 44, root: 48, scale: [0, 2, 5, 7, 9], beats: 4, amb: 'deep', pad: { wave: 'sine', vol: .06, prog: [[0, 7, 9], [-3, 2, 7], [-5, 0, 5], [-7, -2, 2]] }, mel: { wave: 'sine', vol: .0, decay: 3, density: 0, lo: 0, hi: 5 } },
+    ocean:    { name: 'Beach Waves',      price: 1.99, real: { file: 'beach', vol: .55 }, blurb: 'Soft waves rolling onto the shore', bpm: 48, root: 55, scale: [0, 2, 5, 7, 9], beats: 4, pad: { wave: 'sine', vol: .04, prog: [[0, 7, 9], [-3, 2, 7], [-5, 0, 5], [-7, -2, 2]] }, mel: { wave: 'sine', vol: .06, decay: 3, density: .2, lo: 4, hi: 16 } },
+    deep:     { name: 'Deep Ocean',       price: 1.99, calm: true, real: { file: 'deep', vol: .75 }, blurb: 'Whale songs, dolphins and deep water', bpm: 44, root: 48, scale: [0, 2, 5, 7, 9], beats: 4, pad: { wave: 'sine', vol: .06, prog: [[0, 7, 9], [-3, 2, 7], [-5, 0, 5], [-7, -2, 2]] }, mel: { wave: 'sine', vol: .0, decay: 3, density: 0, lo: 0, hi: 5 } },
     harvest:  { name: 'Harvest Fiddle',   price: 2.99, season: { from: '11-03', to: '11-30', label: 'Nov 3 to Nov 30' }, blurb: 'Cozy folk plucks for autumn', bpm: 92, root: 57, scale: [0, 2, 4, 7, 9], beats: 4, pad: { wave: 'triangle', vol: .045, prog: [[0, 4, 7], [-5, -1, 2], [-3, 0, 4], [-7, -3, 0]] }, mel: { wave: 'triangle', vol: .1, decay: .8, density: .66, lo: 0, hi: 14, pluck: true } },
     sweet:    { name: 'Sweet Waltz',      price: 2.99, season: { from: '02-07', to: '02-15', label: 'Feb 7 to Feb 15' }, blurb: 'A gentle waltz for Valentine day', bpm: 88, root: 60, scale: [0, 2, 4, 5, 7, 9, 11], beats: 3, pad: { wave: 'sine', vol: .05, prog: [[0, 4, 7], [5, 9, 12], [-3, 0, 4], [-5, -1, 2]] }, mel: { wave: 'sine', vol: .09, decay: 1.4, density: .62, lo: 0, hi: 13 } }
   };
-  var wet = null, curCalm = false, ctx = null, master = null, timer = null, nextT = 0, beat = 0, bar = 0, pack = 'meadow', on = false, vol = .9, rainNode = null, noteSeed = 1;
+  var pa = null, pIdx = 0, realTok = 0, bufCache = {}, wet = null, curCalm = false, ctx = null, master = null, timer = null, nextT = 0, beat = 0, bar = 0, pack = 'meadow', on = false, vol = .9, rainNode = null, noteSeed = 1;
   function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
   function env(g, t, a, d, v) { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(.0001, t + a + d); }
   function osc(freq, t, dur, wave, v, a, extra) {
@@ -29,7 +30,7 @@
   var lastDeg = 5;
   function scaleNote(p, deg) { var n = p.scale.length, oct = Math.floor(deg / n), idx = ((deg % n) + n) % n; return p.root + p.scale[idx] + 12 * oct; }
   function schedBeat(t) {
-    var p = PACKS[pack], spb = 60 / p.bpm; curCalm = !!p.calm;
+    var p = PACKS[pack], spb = 60 / p.bpm; curCalm = !!p.calm; if (p.tracks) return;
     if (beat === 0) {
       var ch = p.pad.prog[bar % p.pad.prog.length];
       ch.forEach(function (s, i) { osc(hz(p.root + s - 12 + (i ? 0 : 0)), t, spb * p.beats * 1.1, p.pad.wave, p.pad.vol, spb * 1.2); });
@@ -66,8 +67,18 @@
 
   var amb = [];
   function noiseBuf(kind) { var len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0), last = 0; for (var i = 0; i < len; i++) { var w = Math.random() * 2 - 1; last = kind === 'brown' ? (last + .02 * w) / 1.02 : w; d[i] = kind === 'brown' ? last * 3.5 : w; } return buf; }
+  function loadBuf(n) { if (bufCache[n]) return bufCache[n]; return (bufCache[n] = fetch('audio/' + n + '.mp3').then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(function (ab) { return new Promise(function (ok, no) { ctx.decodeAudioData(ab, ok, no); }); }).catch(function (e) { delete bufCache[n]; throw e; })); }
+  function startReal(spec, tok) {
+    loadBuf(spec.file).then(function (buf) {
+      if (!on || tok !== realTok) return;
+      var src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; var g = ctx.createGain(); g.gain.setValueAtTime(0, ctx.currentTime); g.gain.linearRampToValueAtTime(spec.vol, ctx.currentTime + 2.5); src.connect(g); g.connect(master); src.start();
+      amb.push({ stop: function () { try { g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0, ctx.currentTime, .15); src.stop(ctx.currentTime + 1); } catch (e) {} } });
+    }).catch(function () { var k = PACKS[pack]; if (on && tok === realTok && k.real.fallback) startAmb(k.real.fallback); });
+  }
+  function stopPiano() { if (pa) { pa.onended = null; try { pa.pause(); } catch (e) {} pa = null; } }
+  function playTrack() { stopPiano(); var p = PACKS[pack]; if (!on || !p.tracks) return; var a = new Audio('audio/' + p.tracks[pIdx % p.tracks.length] + '.mp3'); a.volume = Math.min(1, vol * .8); a.onended = function () { pIdx++; playTrack(); }; pa = a; var pr = a.play(); if (pr && pr.catch) pr.catch(function () {}); }
   function startAmb(kind) {
-    stopAmb(); if (!kind) return;
+    stopAmb(); realTok++; var rs = PACKS[pack].real; if (rs) startReal(rs, realTok); stopPiano(); if (PACKS[pack].tracks) playTrack(); if (!kind) return;
     if (kind === 'waves') {
       var src = ctx.createBufferSource(); src.buffer = noiseBuf('brown'); src.loop = true; var f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900; var g = ctx.createGain(); g.gain.value = .25;
       var lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = .11; lg.gain.value = .18; lfo.connect(lg); lg.connect(g.gain); src.connect(f); f.connect(g); g.connect(master); src.start(); lfo.start(); amb.push({ stop: function () { try { src.stop(); lfo.stop(); } catch (e) {} } });
@@ -112,8 +123,8 @@
         on = true; nextT = ctx.currentTime + .1; beat = 0; if (PACKS[pack].rain) startRain(); startAmb(PACKS[pack].amb); clearInterval(timer); timer = setInterval(tick, 120); tick();
       } catch (e) { on = false; }
     },
-    stop: function () { on = false; clearInterval(timer); stopRain(); stopAmb(); if (master) { try { master.gain.setTargetAtTime(0, ctx.currentTime, .15); setTimeout(function () { if (!on && master) master.gain.value = vol * .8; }, 600); } catch (e) {} } }
+    stop: function () { on = false; clearInterval(timer); stopRain(); stopAmb(); stopPiano(); if (master) { try { master.gain.setTargetAtTime(0, ctx.currentTime, .15); setTimeout(function () { if (!on && master) master.gain.value = vol * .8; }, 600); } catch (e) {} } }
   };
-  document.addEventListener('visibilitychange', function () { if (document.hidden && on) { try { ctx.suspend(); } catch (e) {} } else if (on && ctx) { try { ctx.resume(); } catch (e) {} } });
+  document.addEventListener('visibilitychange', function () { if (document.hidden && on) { try { ctx.suspend(); } catch (e) {} if (pa) try { pa.pause(); } catch (e) {} } else if (on && ctx) { try { ctx.resume(); } catch (e) {} if (pa) try { pa.play(); } catch (e) {} } });
   root.MMusic = Music;
 })(window);

@@ -2,8 +2,9 @@
 import shutil, os, re
 src = os.path.join(os.path.dirname(__file__), '..', 'mahjong'); dst = os.path.join(os.path.dirname(__file__), 'play')
 os.makedirs(dst, exist_ok=True)
-for f in ['index.html', 'engine.js', 'fx.js', 'faces.js', 'states.js', 'scenery.js', 'scenery2.js', 'music.js']:
+for f in ['index.html', 'engine.js', 'fx.js', 'faces.js', 'states.js', 'scenery.js', 'scenery2.js', 'music.js', 'icon.svg']:
     shutil.copy(os.path.join(src, f), os.path.join(dst, f))
+shutil.copytree(os.path.join(src, 'audio'), os.path.join(dst, 'audio'), dirs_exist_ok=True)
 p = os.path.join(dst, 'index.html'); s = open(p, encoding='utf-8').read()
 s = s.replace('<link rel="manifest" href="manifest.json">', '')
 s = s.replace('<title>Tileberry (prototype)</title>', '<title>Tileberry: play free in your browser</title>\n<link rel="icon" href="../icon.svg">')
