@@ -185,17 +185,19 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792203008"></script>
-<script src="fx.js?v=1792203008"></script>
-<script src="scenery.js?v=1792203008"></script>
-<script src="scenery2.js?v=1792203008"></script>
-<script src="faces.js?v=1792203008"></script>
-<script src="states.js?v=1792203008"></script>
-<script src="music.js?v=1792203008"></script>
+<script src="engine.js?v=1792205227"></script>
+<script src="fx.js?v=1792205227"></script>
+<script src="scenery.js?v=1792205227"></script>
+<script src="scenery2.js?v=1792205227"></script>
+<script src="faces.js?v=1792205227"></script>
+<script src="states.js?v=1792205227"></script>
+<script src="music.js?v=1792205227"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var store = { get: function (k, d) { try { var v = localStorage.getItem('mm_' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set: function (k, v) { try { localStorage.setItem('mm_' + k, JSON.stringify(v)); } catch (e) {} } };
+  var store = { get: function (k, d) { try { var v = localStorage.getItem('mm_' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set: function (k, v) { try { localStorage.setItem('mm_' + k, JSON.stringify(v)); } catch (e) {} try { if (window.__nativePrefs) Capacitor.Plugins.Preferences.set({ key: 'mm_' + k, value: JSON.stringify(v) }); } catch (e) {} } };
+  // iPhone app: mirror progress into durable native storage so the system can never erase it
+  try { if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins.Preferences) { window.__nativePrefs = true; if (localStorage.getItem('mm_boot') == null) { localStorage.setItem('mm_boot', '1'); Capacitor.Plugins.Preferences.keys().then(function (r) { var ks = (r.keys || []).filter(function (k) { return k.indexOf('mm_') === 0; }); if (!ks.length) return; Promise.all(ks.map(function (k) { return Capacitor.Plugins.Preferences.get({ key: k }).then(function (x) { if (x.value != null) localStorage.setItem(k, x.value); }); })).then(function () { location.reload(); }); }); } } } catch (e) {}
 
   // ---------- tile faces (34 kinds): dots, bamboo, characters, winds, dragons ----------
   var DOTC = ['#2b8a4e', '#d33a3a', '#2a62b5'];
@@ -262,7 +264,7 @@
   function tone(f, d, type, vol) { if (muted) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var o = AC.createOscillator(), g = AC.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(f, AC.currentTime); g.gain.setValueAtTime(vol || .15, AC.currentTime); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d); } catch (e) {} }
   function sfx(k, combo) { var mult = 1 + .07 * (Math.min(combo || 1, 8) - 1);
     if (k === 'sel') tone(520, .07, 'triangle', .1);
-    else if (k === 'match') { tone(660 * mult, .12, 'sine', .16); setTimeout(function () { tone(990 * mult, .16, 'sine', .14); }, 70); if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {} }
+    else if (k === 'match') { tone(660 * mult, .12, 'sine', .16); setTimeout(function () { tone(990 * mult, .16, 'sine', .14); }, 70); try { if (window.__nativePrefs && Capacitor.Plugins.Haptics) Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' }); else if (navigator.vibrate) navigator.vibrate(15); } catch (e) {} }
     else if (k === 'no') tone(180, .14, 'sawtooth', .06);
     else if (k === 'win') [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function () { tone(f, .25, 'triangle', .18); }, i * 110); });
   }
@@ -414,7 +416,8 @@
   try { if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) NP = (Capacitor.Plugins && Capacitor.Plugins.NativePurchases) || Capacitor.registerPlugin('NativePurchases'); } catch (e) {}
   var live = !!NP && STORE_LIVE;
   function clubOn() { return !!(own.life || (own.clubUntil && own.clubUntil > Date.now())); }
-  function priceTxt(id, usd) { return prices[PFX + id] || ('$' + usd.toFixed(2)); }
+  function pidOf(id) { return PFX + id.replace(/-/g, '_'); }
+  function priceTxt(id, usd) { return prices[pidOf(id)] || ('$' + usd.toFixed(2)); }
   function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || clubOn() || (typeof QALL !== 'undefined' && QALL) || own[k + ':' + id]); }
   function applyBg(id) {
     var b = MMS.BACKGROUNDS[id];
@@ -435,7 +438,7 @@
   function renderShop() {
     var grid = $('shopGrid'); grid.innerHTML = '';
     $('clubHead').textContent = clubOn() ? '🌿 You are in Tileberry Club ✓' : '🌿 Tileberry Club';
-    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%'], ['club-lifetime', 'Lifetime', '$24.99 once']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[PFX + p[0]] ? prices[PFX + p[0]] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
+    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%'], ['club-lifetime', 'Lifetime', '$24.99 once']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[pidOf(p[0])] ? prices[pidOf(p[0])] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
     $('clubFine').style.display = live ? '' : 'none'; $('restoreBtn').style.display = live ? '' : 'none';
     Array.prototype.forEach.call($('shopTabs').children, function (b) { b.classList.toggle('on', b.dataset.k === shopKind); });
     var k = shopKind, tbl = TBL(k), now = new Date();
@@ -469,7 +472,7 @@
   function note(title, text) { var d = $('doorOv'); d.querySelector('h3').textContent = title; d.querySelector('p').textContent = text; d.classList.remove('hidden'); }
   function afterBuy() { store.set('own', own); if (previewing && owned(previewing.k, previewing.id)) { var p = previewing; previewing = null; $('prevBar').classList.add('hidden'); equip(p.k, p.id); } if (!$('shopPane').classList.contains('hidden')) renderShop(); }
   function applyTx(t) {
-    var id = String((t && t.productIdentifier) || ''); if (id.indexOf(PFX) !== 0) return false; id = id.slice(PFX.length);
+    var id = String((t && t.productIdentifier) || ''); if (id.indexOf(PFX) !== 0) return false; id = id.slice(PFX.length).replace('_', '-');
     if (id === 'club-lifetime') { own.life = true; return true; }
     if (id === 'club-monthly' || id === 'club-yearly') { var until = t.expirationDate ? Date.parse(t.expirationDate) : 0; if (t.isActive === false || !until || until < Date.now()) return false; if (until > (own.clubUntil || 0)) own.clubUntil = until; return true; }
     var m = id.indexOf('-'); if (m < 1) return false; own[id.slice(0, m) + ':' + id.slice(m + 1)] = true; return true;
@@ -484,14 +487,14 @@
     if (!live) return;
     try { var b = await NP.isBillingSupported(); if (!b || !b.isBillingSupported) { live = false; return; }
       var ids = ['club-monthly', 'club-yearly', 'club-lifetime']; ['bg', 'tiles', 'faces', 'music'].forEach(function (k) { Object.keys(TBL(k)).forEach(function (id) { if (!TBL(k)[id].free) ids.push(k + '-' + id); }); });
-      var r = await NP.getProducts({ productIdentifiers: ids.map(function (x) { return PFX + x; }), productType: 'inapp' }); (r.products || []).forEach(function (p) { if (p.priceString) prices[p.identifier] = p.priceString; });
+      var r = await NP.getProducts({ productIdentifiers: ids.map(pidOf), productType: 'inapp' }); (r.products || []).forEach(function (p) { if (p.priceString) prices[p.identifier] = p.priceString; });
       try { NP.addListener('transactionUpdated', function (t) { if (applyTx(t)) afterBuy(); }); } catch (e) {}
       await syncPurchases(); if (!$('shopPane').classList.contains('hidden')) renderShop();
     } catch (e) {}
   }
   async function nativeBuy(id) {
     var sub = id === 'club-monthly' || id === 'club-yearly', t = null;
-    try { t = await NP.purchaseProduct({ productIdentifier: PFX + id, productType: sub ? 'subs' : 'inapp', quantity: 1 }); } catch (e) { return; }
+    try { t = await NP.purchaseProduct({ productIdentifier: pidOf(id), productType: sub ? 'subs' : 'inapp', quantity: 1 }); } catch (e) { return; }
     if (t && applyTx(t)) { afterBuy(); note('Thank you!', 'Your purchase is unlocked. Enjoy!'); }
     else { await syncPurchases(); afterBuy(); }
   }
@@ -514,7 +517,7 @@
   $('shopTabs').onclick = function (e) { var k = e.target.dataset && e.target.dataset.k; if (k) { shopKind = k; renderShop(); } };
   $('tabShop').onclick = showShop;
   // tester shortcut: tap the logo 7 times to unlock everything on this device
-  (function () { var n = 0, t; document.querySelector('.logo').onclick = function () { n++; clearTimeout(t); t = setTimeout(function () { n = 0; }, 1500); if (n >= 7) { n = 0; own.all = true; store.set('own', own); $('msg').textContent = 'Tester: everything unlocked on this device.'; if (!$('shopPane').classList.contains('hidden')) renderShop(); } }; })();
+  (function () { var n = 0, t; document.querySelector('.logo').onclick = function () { n++; clearTimeout(t); t = setTimeout(function () { n = 0; }, 1500); if (n >= 7 && !STORE_LIVE) { n = 0; own.all = true; store.set('own', own); $('msg').textContent = 'Tester: everything unlocked on this device.'; if (!$('shopPane').classList.contains('hidden')) renderShop(); } }; })();
   // ad / screenshot helper: ?level=N  ?layout=pyramid[&seed=3]  ?daily=YYYY-MM-DD  ?bg=id  ?tiles=id  ?faces=id  ?music=id  ?clean=1 (hides the how-to-play box)  ?big=1
   var Q = {}; location.search.replace(/[?&](\w+)=([^&]*)/g, function (m, a, b) { Q[a] = decodeURIComponent(b); });
   if (Q.bg && MMS.BACKGROUNDS[Q.bg]) cur.bg = Q.bg; if (Q.tiles && MMS.TILES[Q.tiles]) cur.tiles = Q.tiles; if (Q.faces && FACE_ITEMS[Q.faces]) cur.faces = Q.faces; if (Q.music && MMusic.PACKS[Q.music]) cur.music = Q.music;
