@@ -178,13 +178,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792201535"></script>
-<script src="fx.js?v=1792201535"></script>
-<script src="scenery.js?v=1792201535"></script>
-<script src="scenery2.js?v=1792201535"></script>
-<script src="faces.js?v=1792201535"></script>
-<script src="states.js?v=1792201535"></script>
-<script src="music.js?v=1792201535"></script>
+<script src="engine.js?v=1792201728"></script>
+<script src="fx.js?v=1792201728"></script>
+<script src="scenery.js?v=1792201728"></script>
+<script src="scenery2.js?v=1792201728"></script>
+<script src="faces.js?v=1792201728"></script>
+<script src="states.js?v=1792201728"></script>
+<script src="music.js?v=1792201728"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -424,7 +424,7 @@
     Array.prototype.forEach.call($('shopTabs').children, function (b) { b.classList.toggle('on', b.dataset.k === shopKind); });
     var k = shopKind, tbl = TBL(k), now = new Date();
     Object.keys(tbl).forEach(function (id) {
-      var it = tbl[id], card = document.createElement('div'), isOwned = owned(k, id), eq = cur[k] === id, inS = MMS.inSeason(it, now), off = !!it.season && !inS && !isOwned;
+      var it = tbl[id]; if (it.hidden) return; var card = document.createElement('div'), isOwned = owned(k, id), eq = cur[k] === id, inS = MMS.inSeason(it, now), off = !!it.season && !inS && !isOwned;
       card.className = 'scard' + (eq ? ' on' : '') + (off ? ' off' : '');
       var thumb;
       if (k === 'bg') thumb = '<div class="thumb" style="' + ('background-image:' + MMS.svgUrl(MMS.SCENES[id])) + '"><div style="display:flex;gap:5px">' + miniTiles().replace(/<div class="mini">/g, '<div class="mini">') + '</div></div>';
