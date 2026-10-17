@@ -167,8 +167,10 @@
   <div class="msg" id="msg"></div>
 </div>
 <div id="shopPane" class="hidden">
-  <div class="club"><h3>🌿 Tileberry Club</h3><p>Every scenery, tile set and music pack, plus a brand-new scenery and song every month. The game itself always stays free, with no ads.</p>
-    <div class="plans"><button class="plan" data-id="club-monthly">Monthly<small>$2.99</small></button><button class="plan best" data-id="club-yearly">Yearly<small>$19.99 · save 44%</small></button><button class="plan" data-id="club-lifetime">Lifetime<small>$24.99 once</small></button></div></div>
+  <div class="club"><h3 id="clubHead">🌿 Tileberry Club</h3><p>Every scenery, tile set and music pack, plus a brand-new scenery and song every month. The game itself always stays free, with no ads.</p>
+    <div class="plans"><button class="plan" data-id="club-monthly">Monthly<small>$2.99</small></button><button class="plan best" data-id="club-yearly">Yearly<small>$19.99 · save 44%</small></button><button class="plan" data-id="club-lifetime">Lifetime<small>$24.99 once</small></button></div>
+    <div id="clubFine" style="display:none;font-size:11.5px;line-height:1.45;margin-top:10px;color:#6d5a2a;font-weight:600">Club Monthly ($2.99) and Yearly ($19.99) renew automatically unless cancelled at least 24 hours before the period ends. Payment is charged to your Apple ID. Manage or cancel any time in your App Store account settings. Lifetime is a one-time purchase. <a href="privacy.html" style="color:#7a3fb8">Privacy Policy</a> · <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" style="color:#7a3fb8">Terms of Use</a></div></div>
+  <div style="text-align:center;margin:8px 0"><button class="sbtn prev" id="restoreBtn" style="display:none;padding:9px 16px">Restore purchases</button></div>
   <div class="shoptabs" id="shopTabs"><button data-k="bg" class="on">Scenery</button><button data-k="faces">Tile art</button><button data-k="tiles">Style</button><button data-k="music">Music</button></div>
   <div class="shopgrid" id="shopGrid"></div>
 </div>
@@ -183,13 +185,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792202909"></script>
-<script src="fx.js?v=1792202909"></script>
-<script src="scenery.js?v=1792202909"></script>
-<script src="scenery2.js?v=1792202909"></script>
-<script src="faces.js?v=1792202909"></script>
-<script src="states.js?v=1792202909"></script>
-<script src="music.js?v=1792202909"></script>
+<script src="engine.js?v=1792203008"></script>
+<script src="fx.js?v=1792203008"></script>
+<script src="scenery.js?v=1792203008"></script>
+<script src="scenery2.js?v=1792203008"></script>
+<script src="faces.js?v=1792203008"></script>
+<script src="states.js?v=1792203008"></script>
+<script src="music.js?v=1792203008"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -407,7 +409,13 @@
   var FACE_ITEMS = { classic: { name: 'Classic Mahjong', price: 0, free: true, blurb: 'The 34 traditional tiles' }, states: { name: 'US States', price: 2.99, blurb: 'All 50 state shapes' }, animals: { name: 'Cute Animals', price: 2.99, blurb: '24 friendly faces' }, flags: { name: 'World Flags', price: 2.99, blurb: '30 flags from around the world' }, landmarks: { name: 'Famous Places', price: 2.99, blurb: '20 landmarks with names' } };
   var TBL = function (k) { return k === 'bg' ? MMS.BACKGROUNDS : k === 'tiles' ? MMS.TILES : k === 'faces' ? FACE_ITEMS : MMusic.PACKS; };
   if (!TBL('bg')[cur.bg]) cur.bg = 'meadow'; if (!TBL('tiles')[cur.tiles]) cur.tiles = 'classic'; if (!TBL('music')[cur.music]) cur.music = 'meadow'; if (!FACE_ITEMS[cur.faces]) cur.faces = 'classic';
-  function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || (typeof QALL !== 'undefined' && QALL) || own[k + ':' + id]); }
+  var STORE_LIVE = false; // the iPhone build sets this to true (real purchases); the web version stays "coming soon"
+  var PFX = 'com.huezelgames.tileberry.', NP = null, prices = {};
+  try { if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) NP = (Capacitor.Plugins && Capacitor.Plugins.NativePurchases) || Capacitor.registerPlugin('NativePurchases'); } catch (e) {}
+  var live = !!NP && STORE_LIVE;
+  function clubOn() { return !!(own.life || (own.clubUntil && own.clubUntil > Date.now())); }
+  function priceTxt(id, usd) { return prices[PFX + id] || ('$' + usd.toFixed(2)); }
+  function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || clubOn() || (typeof QALL !== 'undefined' && QALL) || own[k + ':' + id]); }
   function applyBg(id) {
     var b = MMS.BACKGROUNDS[id];
     $('scene').style.backgroundImage = MMS.svgUrl(MMS.SCENES[id]);
@@ -426,6 +434,9 @@
   }
   function renderShop() {
     var grid = $('shopGrid'); grid.innerHTML = '';
+    $('clubHead').textContent = clubOn() ? '🌿 You are in Tileberry Club ✓' : '🌿 Tileberry Club';
+    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%'], ['club-lifetime', 'Lifetime', '$24.99 once']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[PFX + p[0]] ? prices[PFX + p[0]] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
+    $('clubFine').style.display = live ? '' : 'none'; $('restoreBtn').style.display = live ? '' : 'none';
     Array.prototype.forEach.call($('shopTabs').children, function (b) { b.classList.toggle('on', b.dataset.k === shopKind); });
     var k = shopKind, tbl = TBL(k), now = new Date();
     Object.keys(tbl).forEach(function (id) {
@@ -439,13 +450,14 @@
       var tag = it.season ? '<span class="tag">' + (inS ? 'Limited' : 'Returns') + '</span>' : '';
       card.innerHTML = tag + thumb + '<div class="nm">' + it.name + '</div><div class="bl">' + (it.blurb || (it.season ? it.season.label : (it.free ? 'Included, free' : ''))) + '</div>';
       var row = document.createElement('div'); row.className = 'sbtns';
-      if (off) { row.innerHTML = '<button class="sbtn buy">Remind me</button>'; row.firstChild.onclick = function () { buyTap('notify-' + k + '-' + id); }; }
+      if (off && live) { row.innerHTML = '<button class="sbtn dis">Back ' + it.season.label + '</button>'; }
+      else if (off) { row.innerHTML = '<button class="sbtn buy">Remind me</button>'; row.firstChild.onclick = function () { buyTap('notify-' + k + '-' + id); }; }
       else {
         var pv = document.createElement('button'); pv.className = 'sbtn prev'; pv.textContent = k === 'music' ? 'Listen' : 'Preview'; pv.onclick = function () { preview(k, id); }; row.appendChild(pv);
         var b2 = document.createElement('button');
         if (eq) { b2.className = 'sbtn dis'; b2.textContent = 'In use'; }
         else if (isOwned) { b2.className = 'sbtn use'; b2.textContent = 'Use'; b2.onclick = function () { equip(k, id); }; }
-        else { b2.className = 'sbtn buy'; b2.textContent = '$' + it.price.toFixed(2); b2.onclick = function () { buyTap(k + '-' + id); }; }
+        else { b2.className = 'sbtn buy'; b2.textContent = priceTxt(k + '-' + id, it.price); b2.onclick = function () { buyTap(k + '-' + id); }; }
         row.appendChild(b2);
       }
       card.appendChild(row); grid.appendChild(card);
@@ -454,13 +466,44 @@
   function equip(k, id) {
     cur[k] = id; store.set(k + 'Sel', id); applyAll(); if (k === 'faces') { applyTiles(cur.tiles); start(spec); $('msg').textContent = 'New board with ' + FACE_ITEMS[id].name + '.'; } if (k === 'music' && MMusic.on) MMusic.setPack(id); updateChip(); renderShop();
   }
-  function buyTap(id) { track('buytap', { l: id }); $('doorOv').classList.remove('hidden'); }
+  function note(title, text) { var d = $('doorOv'); d.querySelector('h3').textContent = title; d.querySelector('p').textContent = text; d.classList.remove('hidden'); }
+  function afterBuy() { store.set('own', own); if (previewing && owned(previewing.k, previewing.id)) { var p = previewing; previewing = null; $('prevBar').classList.add('hidden'); equip(p.k, p.id); } if (!$('shopPane').classList.contains('hidden')) renderShop(); }
+  function applyTx(t) {
+    var id = String((t && t.productIdentifier) || ''); if (id.indexOf(PFX) !== 0) return false; id = id.slice(PFX.length);
+    if (id === 'club-lifetime') { own.life = true; return true; }
+    if (id === 'club-monthly' || id === 'club-yearly') { var until = t.expirationDate ? Date.parse(t.expirationDate) : 0; if (t.isActive === false || !until || until < Date.now()) return false; if (until > (own.clubUntil || 0)) own.clubUntil = until; return true; }
+    var m = id.indexOf('-'); if (m < 1) return false; own[id.slice(0, m) + ':' + id.slice(m + 1)] = true; return true;
+  }
+  async function syncPurchases() {
+    if (!live) return 0; var n = 0;
+    try { var r = await NP.getPurchases({ productType: 'inapp' }); own.clubUntil = 0;
+      (r.purchases || []).forEach(function (t) { if (applyTx(t)) n++; }); store.set('own', own); } catch (e) {}
+    return n;
+  }
+  async function storeInit() {
+    if (!live) return;
+    try { var b = await NP.isBillingSupported(); if (!b || !b.isBillingSupported) { live = false; return; }
+      var ids = ['club-monthly', 'club-yearly', 'club-lifetime']; ['bg', 'tiles', 'faces', 'music'].forEach(function (k) { Object.keys(TBL(k)).forEach(function (id) { if (!TBL(k)[id].free) ids.push(k + '-' + id); }); });
+      var r = await NP.getProducts({ productIdentifiers: ids.map(function (x) { return PFX + x; }), productType: 'inapp' }); (r.products || []).forEach(function (p) { if (p.priceString) prices[p.identifier] = p.priceString; });
+      try { NP.addListener('transactionUpdated', function (t) { if (applyTx(t)) afterBuy(); }); } catch (e) {}
+      await syncPurchases(); if (!$('shopPane').classList.contains('hidden')) renderShop();
+    } catch (e) {}
+  }
+  async function nativeBuy(id) {
+    var sub = id === 'club-monthly' || id === 'club-yearly', t = null;
+    try { t = await NP.purchaseProduct({ productIdentifier: PFX + id, productType: sub ? 'subs' : 'inapp', quantity: 1 }); } catch (e) { return; }
+    if (t && applyTx(t)) { afterBuy(); note('Thank you!', 'Your purchase is unlocked. Enjoy!'); }
+    else { await syncPurchases(); afterBuy(); }
+  }
+  function buyTap(id) { track('buytap', { l: id }); if (live && id.indexOf('notify-') !== 0) { nativeBuy(id); return; } note('Coming soon!', 'Tileberry is still being built, so purchases are not open yet. We counted your tap. It tells us what to make first. Thank you!'); }
+  $('restoreBtn').onclick = async function () { try { await NP.restorePurchases(); } catch (e) {} var n = await syncPurchases(); afterBuy(); note(n ? 'Purchases restored' : 'Nothing to restore', n ? 'We found ' + n + ' purchase' + (n === 1 ? '' : 's') + ' on your Apple ID.' : 'We did not find earlier purchases on this Apple ID.'); };
+  storeInit();
   $('doorOk').onclick = function () { $('doorOv').classList.add('hidden'); };
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.plan'); if (b) buyTap(b.dataset.id); });
   function preview(k, id) {
     previewing = { k: k, id: id }; track('preview', { l: k + '-' + id });
     if (k === 'bg') applyBg(id); else if (k === 'tiles') applyTiles(id); else if (k === 'faces') { cur.faces = id; } else { MMusic.setPack(id); if (!MMusic.on) { MMusic.start(); } updateChip(); }
-    var it = TBL(k)[id]; $('prevText').textContent = (k === 'music' ? 'Listening: ' : 'Previewing: ') + it.name; $('prevGet').textContent = owned(k, id) ? 'Use it' : 'Get it $' + it.price.toFixed(2); $('prevBar').classList.remove('hidden');
+    var it = TBL(k)[id]; $('prevText').textContent = (k === 'music' ? 'Listening: ' : 'Previewing: ') + it.name; $('prevGet').textContent = owned(k, id) ? 'Use it' : 'Get it ' + priceTxt(k + '-' + id, it.price); $('prevBar').classList.remove('hidden');
     if (k === 'faces') { $('tabShop').classList.remove('on'); $('tabDaily').classList.add('on'); $('shopPane').classList.add('hidden'); $('play').classList.remove('hidden'); start(spec); }
     else if (k !== 'music') { $('tabDaily').classList.contains('on') || $('tabLevels').classList.contains('on') ? 0 : (function () { $('tabShop').classList.remove('on'); $('tabDaily').classList.add('on'); $('shopPane').classList.add('hidden'); $('play').classList.remove('hidden'); render(); })(); }
   }
