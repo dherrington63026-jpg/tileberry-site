@@ -36,6 +36,21 @@
   S.harvest = wrap('<defs>' + grad('s', ['#f2a850', '#fcd890', '#fff0cc']) + glow('g', '#fff2b0') + '</defs><rect width="400" height="300" fill="url(#s)"/><circle cx="310" cy="80" r="60" fill="url(#g)"/><circle cx="310" cy="80" r="24" fill="#fff4b8"/>' +
     '<path d="M0 195 Q100 160 200 190 T400 175 L400 300 L0 300 Z" fill="#d89a3a"/><path d="M0 240 Q130 205 250 238 T400 225 L400 300 L0 300 Z" fill="#b9782a"/>' + [20, 50, 82, 120, 150, 340, 372, 395].map(function (x, i) { return wheat(x, 250 + (i % 3) * 8, 52 + (i % 2) * 14); }).join('') + pumpkin(190, 268, 1.1) + pumpkin(250, 280, .8) + pumpkin(130, 280, .7) + dots(18, 23, 400, 300, 3.2, '#c9481f', .85));
 
+
+  // ---- Berry Meadow: the new free default scene
+  function cloud(x, y, k) { return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')" fill="#fff" opacity=".92"><ellipse cx="0" cy="0" rx="34" ry="13"/><ellipse cx="-20" cy="-7" rx="19" ry="12"/><ellipse cx="14" cy="-10" rx="22" ry="14"/></g>'; }
+  function tree(x, y, k, c1, c2) { return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><rect x="-3" y="0" width="6" height="22" rx="2" fill="#6b4a2c"/><circle cx="0" cy="-8" r="19" fill="' + c1 + '"/><circle cx="-11" cy="2" r="13" fill="' + c2 + '"/><circle cx="12" cy="0" r="14" fill="' + c2 + '"/></g>'; }
+  function bush(x, y, k) { return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')"><ellipse cx="0" cy="0" rx="24" ry="14" fill="#2f8f4a"/><ellipse cx="-12" cy="-6" rx="14" ry="10" fill="#3aa85a"/><ellipse cx="12" cy="-5" rx="13" ry="10" fill="#34a052"/>' + [[-14, -4], [-2, -10], [10, -2], [16, -9], [-8, 4], [4, 3]].map(function (b) { return '<circle cx="' + b[0] + '" cy="' + b[1] + '" r="3.4" fill="#d6366c"/><circle cx="' + (b[0] - 1) + '" cy="' + (b[1] - 1) + '" r="1" fill="#ff9ec0"/>'; }).join('') + '</g>'; }
+  S.meadow = wrap('<defs>' + grad('s', ['#8fcdfb', '#cfe9ff', '#fdf0ff']) + glow('g', '#fff6c8') + '</defs><rect width="400" height="300" fill="url(#s)"/><circle cx="318" cy="70" r="70" fill="url(#g)"/><circle cx="318" cy="70" r="24" fill="#fff3b8"/>' +
+    cloud(70, 58, 1.1) + cloud(200, 34, .8) + cloud(350, 110, .7) + cloud(130, 108, .6) +
+    '<path d="M0 182 Q70 140 150 172 T300 160 T400 170 L400 300 L0 300 Z" fill="#b8e6a2"/>' + tree(60, 168, .8, '#6fc276', '#5bb068') + tree(330, 160, .9, '#6fc276', '#5bb068') +
+    '<path d="M0 214 Q100 176 210 206 T400 196 L400 300 L0 300 Z" fill="#8fd67c"/>' + tree(110, 204, 1, '#4fae5a', '#43a050') + tree(280, 198, 1.1, '#4fae5a', '#43a050') +
+    '<path d="M0 252 Q120 222 250 248 T400 238 L400 300 L0 300 Z" fill="#5fbd5e"/>' + bush(40, 258, 1.2) + bush(350, 252, 1.3) + bush(200, 268, .9) +
+    dots(46, 14, 400, 60, 2.6, '#ffffff', .95).replace(/cy="(\d+)"/g, function (m, y) { return 'cy="' + (240 + (+y)) + '"'; }) + dots(26, 29, 400, 56, 2.6, '#ffd24a', .95).replace(/cy="(\d+)"/g, function (m, y) { return 'cy="' + (242 + (+y)) + '"'; }) + dots(22, 41, 400, 56, 2.6, '#ff8fb8', .95).replace(/cy="(\d+)"/g, function (m, y) { return 'cy="' + (244 + (+y)) + '"'; }));
+  MMS.BACKGROUNDS.meadow = { name: 'Berry Meadow', price: 0, free: true, page: 'linear-gradient(175deg,#a5d8ff 0%,#cdeaff 45%,#e9f4ff 100%)' };
+  var FXMAP = { meadow: 'petals', lake: 'sparkle', autumn: 'leaves', winter: 'snow', spring: 'petals', night: 'fireflies', halloween: 'embers', holiday: 'snow', beach: 'sparkle', sunset: 'stars', mountain: 'sparkle', zen: 'petals', space: 'stars', valentine: 'hearts', july4: 'embers', harvest: 'leaves' };
+  Object.keys(FXMAP).forEach(function (k) { if (MMS.BACKGROUNDS[k]) MMS.BACKGROUNDS[k].fx = FXMAP[k]; });
+
   var B = MMS.BACKGROUNDS;
   B.beach = { name: 'Summer Beach', price: 2.99, page: 'linear-gradient(170deg,#d8f3ff 0%,#c4eafa 55%,#f4e6c0 100%)' };
   B.sunset = { name: 'Desert Sunset', price: 2.99, dark: true, page: 'linear-gradient(170deg,#4a2a6a 0%,#a8406a 55%,#e07a4a 100%)' };

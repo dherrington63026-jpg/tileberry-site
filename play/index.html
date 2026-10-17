@@ -102,13 +102,45 @@
   .door { width:min(92vw,360px); background:#fff; border-radius:24px; padding:22px; text-align:center; box-shadow:0 30px 70px rgba(0,0,0,.4); }
   .door h3 { margin:0 0 8px; font-size:22px; color:#2f6e48; } .door p { margin:0 0 14px; font-weight:700; color:#5d7566; line-height:1.45; font-size:14.5px; }
   .tiny { font-size:12px; color:var(--ink2); text-align:center; margin-top:16px; }
+  /* ===== Graphics upgrade ===== */
+  #scene { position:fixed; left:0; right:0; bottom:0; height:calc(100vw*.75); max-height:72vh; background-size:cover; background-position:center bottom; background-repeat:no-repeat; z-index:0; pointer-events:none; -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 22%); mask-image:linear-gradient(to bottom,transparent 0%,#000 22%); }
+  #ambient { position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.9; }
+  #sparks { position:fixed; inset:0; z-index:18; pointer-events:none; }
+  .app { position:relative; z-index:2; }
+  .floaty { position:fixed; z-index:19; transform:translate(-50%,-50%); font-weight:900; font-size:24px; color:#fff; text-shadow:0 2px 0 #c0397a,0 0 14px rgba(255,255,255,.9); pointer-events:none; animation:floaty 1s ease-out forwards; white-space:nowrap; }
+  .floaty.big { font-size:32px; color:#fff7c2; text-shadow:0 3px 0 #d6742a,0 0 18px rgba(255,220,100,.95); }
+  @keyframes floaty { from { opacity:1; margin-top:0; } to { opacity:0; margin-top:-70px; } }
+  .stage { background:rgba(255,255,255,.10); padding:10px; border-radius:30px; border:2px solid rgba(255,255,255,.6); box-shadow:0 22px 50px rgba(20,40,60,.38), inset 0 0 0 2px rgba(255,255,255,.2); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); }
+  #boardWrap { background:radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.10), rgba(10,40,50,.30)) !important; border-radius:22px; box-shadow:inset 0 8px 24px rgba(0,0,0,.5), inset 0 0 0 2px rgba(255,255,255,.2); }
+  .tile { background:var(--tbg,linear-gradient(145deg,#fffef8 0%,#f8f1da 52%,#eadfbd 100%)); border:1px solid var(--tbd,rgba(168,146,92,.75));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.95), inset 2px 0 3px rgba(255,255,255,.7), inset 0 -3px 5px rgba(150,115,40,.2), -3px 3px 0 var(--s1,#2c7a50), -3px 5px 0 var(--s2,#1c5a3a), -6px 10px 12px rgba(0,0,0,.5); }
+  .tile::after { content:""; position:absolute; inset:0; border-radius:inherit; background:linear-gradient(135deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,0) 36%), linear-gradient(0deg,rgba(120,90,30,.12),rgba(120,90,30,0) 40%); pointer-events:none; }
+  .tile .face { inset:7% 9%; border-radius:8%; background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,248,222,.4)); box-shadow:inset 0 1px 2px rgba(120,100,50,.35), 0 1px 0 rgba(255,255,255,.8); padding:3% 4%; }
+  .tile.gone { opacity:0; transform:scale(1.4) translateY(-26%) rotate(9deg); transition:opacity .35s, transform .35s; pointer-events:none; }
+  .tile.sel { transform:translateY(-5%) scale(1.07); }
+  .tile.blocked { filter:brightness(.88) saturate(.82) !important; }
+  body.scenic .app { opacity:0; pointer-events:none; transition:opacity .35s; }
+  body.scenic #scene { height:100vh; max-height:none; }
+  .app { transition:opacity .35s; }
+  .prog { height:10px; border-radius:99px; background:rgba(255,255,255,.28); margin:11px 6px 0; overflow:hidden; box-shadow:inset 0 2px 3px rgba(0,0,0,.25); }
+  .prog i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ffd966,#ff9ec7,#c59bff); border-radius:99px; transition:width .35s; box-shadow:0 0 10px rgba(255,200,120,.8); }
+  .info { color:#fff; text-shadow:0 2px 3px rgba(0,0,0,.45); }
+  .tool { background:linear-gradient(180deg,#ffffff,#e9f1ee); border:2px solid #fff; border-radius:22px; box-shadow:0 6px 0 rgba(30,80,70,.3), 0 16px 26px rgba(0,0,0,.2); }
+  #undo { background:linear-gradient(180deg,#eaf3ff,#b3d3ff); } #hint { background:linear-gradient(180deg,#fff6d2,#ffd45e); } #shuf { background:linear-gradient(180deg,#f4eaff,#cdb0ff); }
+  .tool .i { font-size:27px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.22)); }
+  .chip { box-shadow:0 5px 0 rgba(30,80,70,.25), 0 10px 18px rgba(0,0,0,.15); }
+  h1 { text-shadow:0 2px 0 rgba(255,255,255,.7); }
+  .logo { box-shadow:0 8px 18px rgba(30,80,50,.45), inset 0 2px 0 rgba(255,255,255,.5); }
+  .seg { background:rgba(255,255,255,.55); box-shadow:0 8px 20px rgba(20,50,70,.18); backdrop-filter:blur(6px); }
 </style>
 </head>
 <body>
+<div id="scene"></div>
+<canvas id="ambient"></canvas>
 <div class="app">
 <header>
   <div class="logo">🀄</div>
-  <div class="titles"><h1>Tileberry</h1><div class="sub">Match free pairs. Calm, with no ads while you play.</div></div>
+  <div class="titles"><h1>Tileberry</h1><div class="sub">Calm tile matching. No ads. Ever.</div></div>
   <button id="bigb" class="iconbtn" title="Big tiles">🔍</button>
   <button id="mute" class="iconbtn">🔊</button>
   <div class="pill"><span>🔥</span><span id="streak">0</span></div>
@@ -119,6 +151,7 @@
   <div class="stage">
     <div id="cap" class="cap hidden"><span id="capText"></span><button id="capSkip">Got it</button></div>
     <div id="boardWrap"></div>
+    <div class="prog"><i id="progFill"></i></div>
     <div class="info"><span id="title"></span><span>Pairs left <b id="pairs">0</b> · <b id="clock">0:00</b></span></div>
   </div>
   <div class="tools">
@@ -141,11 +174,13 @@
 
 <div id="winOv" class="overlay hidden"><div class="win"><div class="big">🌸</div><h2 id="winTitle">Lovely!</h2><div class="stars" id="winStars"></div><div class="meta" id="winText"></div>
   <div class="btnrow"><button class="btn sec" id="again">Replay</button><button class="btn pri" id="next">Next board</button></div></div></div>
-<div id="prevBar" class="hidden"><span id="prevText"></span><button class="g" id="prevGet">Get it</button><button class="b" id="prevBack">Back to mine</button></div>
+<div id="prevBar" class="hidden"><span id="prevText"></span><button class="b" id="prevView">👁 View</button><button class="g" id="prevGet">Get it</button><button class="b" id="prevBack">Back</button></div>
 <div id="doorOv" class="overlay hidden"><div class="door"><h3>Coming soon!</h3><p>Tileberry is still being built, so purchases are not open yet. We counted your tap. It tells us what to make first. Thank you!</p><button class="btn pri" id="doorOk" style="width:100%">OK</button></div></div>
+<canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
 <script src="engine.js"></script>
+<script src="fx.js"></script>
 <script src="scenery.js"></script>
 <script src="scenery2.js"></script>
 <script src="faces.js"></script>
@@ -168,17 +203,17 @@
   function dots(n) {
     var s = '';
     PATS[n].forEach(function (p, i) {
-      var c = px(p), r = n === 1 ? 17 : n <= 4 ? 9 : n <= 6 ? 8 : 6.6, col = n === 1 ? DOTC[1] : DOTC[i % 3];
-      s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + r + '" fill="' + col + '"/><circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + (r * .62) + '" fill="#fffdf3"/><circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + (r * .3) + '" fill="' + col + '"/>';
+      var c = px(p), r = n === 1 ? 17 : n <= 4 ? 9 : n <= 6 ? 8 : 6.6, g = 'url(#dg' + (n === 1 ? 1 : i % 3) + ')';
+      s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + r + '" fill="' + g + '" stroke="rgba(0,0,0,.22)" stroke-width=".6"/><circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + (r * .62) + '" fill="url(#dw)"/><circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + (r * .34) + '" fill="' + g + '"/><ellipse cx="' + (c[0] - r * .34) + '" cy="' + (c[1] - r * .46) + '" rx="' + (r * .3) + '" ry="' + (r * .16) + '" fill="#fff" opacity=".6" transform="rotate(-30 ' + (c[0] - r * .34) + ' ' + (c[1] - r * .46) + ')"/>';
     });
     return s;
   }
   function bamboo(n) {
     var s = '';
-    if (n === 1) return '<ellipse cx="30" cy="42" rx="14" ry="19" fill="#2b8a4e"/><circle cx="30" cy="20" r="9" fill="#d33a3a"/><path d="M30 12 L36 18 L30 22 Z" fill="#e8b02a"/><path d="M18 60 L30 36 L42 60" stroke="#1a5c33" stroke-width="3" fill="none"/>';
+    if (n === 1) return '<ellipse cx="30" cy="42" rx="14" ry="19" fill="url(#bgG)" stroke="#1a5c33" stroke-width="1"/><circle cx="30" cy="20" r="9" fill="url(#bgR)"/><path d="M30 12 L36 18 L30 22 Z" fill="#f2b82a"/><path d="M18 60 L30 36 L42 60" stroke="#1a5c33" stroke-width="3" fill="none"/><ellipse cx="25" cy="38" rx="3" ry="7" fill="#fff" opacity=".3"/>';
     PATS[n].forEach(function (p, i) {
-      var c = px(p), w = n <= 4 ? 8 : 6.5, h = n <= 4 ? 22 : n <= 6 ? 18 : 14, col = (n % 2 === 1 && i === Math.floor(n / 2)) || (n === 8 && false) ? '#d33a3a' : (i % 2 ? '#2b8a4e' : '#1f7a44');
-      s += '<rect x="' + (c[0] - w / 2) + '" y="' + (c[1] - h / 2) + '" width="' + w + '" height="' + h + '" rx="3" fill="' + col + '"/><line x1="' + (c[0] - w / 2) + '" y1="' + c[1] + '" x2="' + (c[0] + w / 2) + '" y2="' + c[1] + '" stroke="#fffdf3" stroke-width="1.6"/>';
+      var c = px(p), w = n <= 4 ? 8 : 6.5, h = n <= 4 ? 22 : n <= 6 ? 18 : 14, red = (n % 2 === 1 && i === Math.floor(n / 2)), g = red ? 'url(#bgR)' : 'url(#bgG)';
+      s += '<rect x="' + (c[0] - w / 2) + '" y="' + (c[1] - h / 2) + '" width="' + w + '" height="' + h + '" rx="3.2" fill="' + g + '" stroke="rgba(0,0,0,.22)" stroke-width=".6"/><line x1="' + (c[0] - w / 2 + .5) + '" y1="' + c[1] + '" x2="' + (c[0] + w / 2 - .5) + '" y2="' + c[1] + '" stroke="#fffdf3" stroke-width="1.5"/>';
     });
     return s;
   }
@@ -195,7 +230,8 @@
   function faceSvgFor(setId, id) {
     var key = setId + ':' + id; if (faceCache[key]) return faceCache[key];
     var inner = setId !== 'classic' ? MMF.FACESETS[setId].draw(id) : (id < 9 ? dots(id + 1) : id < 18 ? bamboo(id - 8) : id < 27 ? chars(id - 17) : id < 31 ? wind(id - 27) : dragon(id - 31));
-    return (faceCache[key] = '<svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>');
+    var defs = setId === 'classic' ? '<defs><radialGradient id="dg0" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#6fe39a"/><stop offset="1" stop-color="#1c7340"/></radialGradient><radialGradient id="dg1" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#ff8a8a"/><stop offset="1" stop-color="#b01f1f"/></radialGradient><radialGradient id="dg2" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#7db0ff"/><stop offset="1" stop-color="#1c4a98"/></radialGradient><radialGradient id="dw" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#efe5c4"/></radialGradient><linearGradient id="bgG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1f7a44"/><stop offset=".45" stop-color="#7fe0a0"/><stop offset="1" stop-color="#1a6a3a"/></linearGradient><linearGradient id="bgR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b82222"/><stop offset=".45" stop-color="#ff9a9a"/><stop offset="1" stop-color="#9c1c1c"/></linearGradient></defs>' : '';
+    return (faceCache[key] = '<svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">' + defs + inner + '</svg>');
   }
   function faceSvg(id) { return faceSvgFor(cur.faces, id); }
   function poolSize() { return cur.faces === 'classic' ? 34 : MMF.FACESETS[cur.faces].n; }
@@ -218,9 +254,9 @@
   $('mute').onclick = function () { muted = !muted; store.set('muted', muted); this.textContent = muted ? '🔇' : '🔊'; if (muted && MMusic.on) { MMusic.stop(); store.set('musicOn', false); updateChip(); } };
   var AC = null;
   function tone(f, d, type, vol) { if (muted) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var o = AC.createOscillator(), g = AC.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(f, AC.currentTime); g.gain.setValueAtTime(vol || .15, AC.currentTime); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d); } catch (e) {} }
-  function sfx(k) {
+  function sfx(k, combo) { var mult = 1 + .07 * (Math.min(combo || 1, 8) - 1);
     if (k === 'sel') tone(520, .07, 'triangle', .1);
-    else if (k === 'match') { tone(660, .12, 'sine', .16); setTimeout(function () { tone(990, .16, 'sine', .14); }, 70); if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {} }
+    else if (k === 'match') { tone(660 * mult, .12, 'sine', .16); setTimeout(function () { tone(990 * mult, .16, 'sine', .14); }, 70); if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {} }
     else if (k === 'no') tone(180, .14, 'sawtooth', .06);
     else if (k === 'win') [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function () { tone(f, .25, 'triangle', .18); }, i * 110); });
   }
@@ -246,7 +282,7 @@
   }
 
   // ---------- game ----------
-  var G = null, spec = null, sel = -1, els = [], timer = null, t0 = 0, secs = 0, hints = 0, shuffles = 0, done = false, ro = null;
+  var combo = 0, lastMatch = 0, G = null, spec = null, sel = -1, els = [], timer = null, t0 = 0, secs = 0, hints = 0, shuffles = 0, done = false, ro = null;
   function start(sp) {
     spec = sp; done = false; sel = -1; hints = 0; shuffles = 0; secs = 0; t0 = Date.now();
     $('winOv').classList.add('hidden'); $('msg').textContent = '';
@@ -285,7 +321,7 @@
   }
   function refresh() {
     G.tiles.forEach(function (t, i) { var e = els[i]; if (!e) return; e.classList.toggle('gone', !!G.gone[i]); e.classList.toggle('blocked', !G.gone[i] && !MJ.isFree(G, i)); if (!G.gone[i] && !e.classList.contains('hint')) e.classList.remove('gone'); });
-    $('pairs').textContent = Math.floor(MJ.remaining(G) / 2);
+    $('pairs').textContent = Math.floor(MJ.remaining(G) / 2); $('progFill').style.width = (100 * (1 - MJ.remaining(G) / G.tiles.length)) + '%';
     var stuck = MJ.remaining(G) > 0 && !MJ.findPair(G);
     $('shuf').classList.toggle('pulse', stuck);
     $('msg').textContent = stuck ? 'No more matches. Tap Shuffle (free).' : $('msg').textContent;
@@ -299,7 +335,10 @@
     if (sel === i) { els[i].classList.remove('sel'); sel = -1; return; }
     if (MJ.matches(G, sel, i)) {
       var a = sel, b = i; els[a].classList.remove('sel'); sel = -1;
-      MJ.removePair(G, a, b); sfx('match'); refresh();
+      var ra = els[a].getBoundingClientRect(), rb = els[b].getBoundingClientRect(), nowT = Date.now();
+      combo = (nowT - lastMatch < 2600) ? combo + 1 : 1; lastMatch = nowT;
+      MJ.removePair(G, a, b); sfx('match', combo); refresh();
+      if (window.FX) { var cxa = ra.left + ra.width / 2, cya = ra.top + ra.height / 2, cxb = rb.left + rb.width / 2, cyb = rb.top + rb.height / 2; FX.burst(cxa, cya, 9 + combo * 2); FX.burst(cxb, cyb, 9 + combo * 2); if (combo >= 2) FX.float((cxa + cxb) / 2, Math.min(cya, cyb) - 26, 'Combo x' + combo + '!', combo >= 4 ? 'big' : ''); }
       if (MJ.remaining(G) === 0) win();
     } else { els[sel].classList.remove('sel'); sel = i; els[i].classList.add('sel'); sfx('no'); }
   }
@@ -366,10 +405,11 @@
   if (!TBL('bg')[cur.bg]) cur.bg = 'meadow'; if (!TBL('tiles')[cur.tiles]) cur.tiles = 'classic'; if (!TBL('music')[cur.music]) cur.music = 'meadow'; if (!FACE_ITEMS[cur.faces]) cur.faces = 'classic';
   function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || own[k + ':' + id]); }
   function applyBg(id) {
-    var b = MMS.BACKGROUNDS[id], w = $('boardWrap');
-    if (b.felt) { w.style.backgroundImage = ''; w.style.background = ''; } else { w.style.backgroundImage = MMS.svgUrl(MMS.SCENES[id]); w.style.backgroundSize = 'cover'; w.style.backgroundPosition = 'center'; }
+    var b = MMS.BACKGROUNDS[id];
+    $('scene').style.backgroundImage = MMS.svgUrl(MMS.SCENES[id]);
     document.body.style.background = b.page; document.body.style.backgroundAttachment = 'fixed'; document.documentElement.style.background = b.page;
     document.body.classList.toggle('dark', !!b.dark);
+    if (window.FX) FX.ambient(b.fx || null);
   }
   function applyTiles(id) { $('boardWrap').style.cssText += ';'; var w = $('boardWrap'); ['--tbg', '--tbd', '--s1', '--s2', '--ff'].forEach(function (v) { w.style.removeProperty(v); }); (MMS.TILE_CSS[id] || '').split(';').forEach(function (d) { var i = d.indexOf(':'); if (i > 0) w.style.setProperty(d.slice(0, i).trim(), d.slice(i + 1).trim()); }); if (cur.faces !== 'classic') w.style.removeProperty('--ff'); }
   function applyAll() { applyBg(cur.bg); applyTiles(cur.tiles); MMusic.setPack(cur.music); }
@@ -388,7 +428,7 @@
       var it = tbl[id], card = document.createElement('div'), isOwned = owned(k, id), eq = cur[k] === id, inS = MMS.inSeason(it, now), off = !!it.season && !inS && !isOwned;
       card.className = 'scard' + (eq ? ' on' : '') + (off ? ' off' : '');
       var thumb;
-      if (k === 'bg') thumb = '<div class="thumb" style="' + (it.felt ? 'background:radial-gradient(circle at 50% 40%,#3f9a63,#2d7a4c)' : 'background-image:' + MMS.svgUrl(MMS.SCENES[id])) + '"><div style="display:flex;gap:5px">' + miniTiles().replace(/<div class="mini">/g, '<div class="mini">') + '</div></div>';
+      if (k === 'bg') thumb = '<div class="thumb" style="' + ('background-image:' + MMS.svgUrl(MMS.SCENES[id])) + '"><div style="display:flex;gap:5px">' + miniTiles().replace(/<div class="mini">/g, '<div class="mini">') + '</div></div>';
       else if (k === 'tiles') thumb = '<div class="thumb" style="background:radial-gradient(circle at 50% 40%,#3f9a63,#2d7a4c);' + (MMS.TILE_CSS[id] || '') + '">' + miniTiles() + '</div>';
       else if (k === 'faces') thumb = '<div class="thumb" style="background:radial-gradient(circle at 50% 40%,#3f9a63,#2d7a4c)">' + [0, 1, 2].map(function (i) { return '<div class="mini">' + faceSvgFor(id, id === 'classic' ? [4, 27, 31][i] : i + 3) + '</div>'; }).join('') + '</div>';
       else thumb = '<div class="thumb" style="background:linear-gradient(135deg,#e7f6d8,#bfe3d6)"><span class="note">🎵</span></div>';
@@ -421,12 +461,14 @@
     else if (k !== 'music') { $('tabDaily').classList.contains('on') || $('tabLevels').classList.contains('on') ? 0 : (function () { $('tabShop').classList.remove('on'); $('tabDaily').classList.add('on'); $('shopPane').classList.add('hidden'); $('play').classList.remove('hidden'); render(); })(); }
   }
   function endPreview() { var wasMusic = previewing && previewing.k === 'music', wasFaces = previewing && previewing.k === 'faces'; previewing = null; if (wasFaces) { cur.faces = store.get('facesSel', 'classic'); start(spec); } applyAll(); $('prevBar').classList.add('hidden'); if (wasMusic && !store.get('musicOn', false)) MMusic.stop(); updateChip(); if (!$('shopPane').classList.contains('hidden')) renderShop(); }
-  $('prevBack').onclick = endPreview;
+  $('prevBack').onclick = function () { document.body.classList.remove('scenic'); endPreview(); };
+  $('prevView').onclick = function () { document.body.classList.toggle('scenic'); this.textContent = document.body.classList.contains('scenic') ? '↩ Board' : '👁 View'; };
   $('prevGet').onclick = function () { if (!previewing) return; var p = previewing; if (owned(p.k, p.id)) { previewing = null; equip(p.k, p.id); $('prevBar').classList.add('hidden'); } else buyTap(p.k + '-' + p.id); };
   $('shopTabs').onclick = function (e) { var k = e.target.dataset && e.target.dataset.k; if (k) { shopKind = k; renderShop(); } };
   $('tabShop').onclick = showShop;
   // tester shortcut: tap the logo 7 times to unlock everything on this device
   (function () { var n = 0, t; document.querySelector('.logo').onclick = function () { n++; clearTimeout(t); t = setTimeout(function () { n = 0; }, 1500); if (n >= 7) { n = 0; own.all = true; store.set('own', own); $('msg').textContent = 'Tester: everything unlocked on this device.'; if (!$('shopPane').classList.contains('hidden')) renderShop(); } }; })();
+  if (window.FX) FX.init();
   applyAll(); updateChip();
   $('tabDaily').onclick = showDaily; $('tabLevels').onclick = showLevels;
   addEventListener('resize', function () { if (G && !$('play').classList.contains('hidden')) render(); });
