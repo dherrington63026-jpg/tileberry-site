@@ -185,13 +185,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792207459"></script>
-<script src="fx.js?v=1792207459"></script>
-<script src="scenery.js?v=1792207459"></script>
-<script src="scenery2.js?v=1792207459"></script>
-<script src="faces.js?v=1792207459"></script>
-<script src="states.js?v=1792207459"></script>
-<script src="music.js?v=1792207459"></script>
+<script src="engine.js?v=1792647240"></script>
+<script src="fx.js?v=1792647240"></script>
+<script src="scenery.js?v=1792647240"></script>
+<script src="scenery2.js?v=1792647240"></script>
+<script src="faces.js?v=1792647240"></script>
+<script src="states.js?v=1792647240"></script>
+<script src="music.js?v=1792647240"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -522,6 +522,7 @@
   (function () { var n = 0, t; document.querySelector('.logo').onclick = function () { n++; clearTimeout(t); t = setTimeout(function () { n = 0; }, 1500); if (n >= 7 && !STORE_LIVE) { n = 0; own.all = true; store.set('own', own); $('msg').textContent = 'Tester: everything unlocked on this device.'; if (!$('shopPane').classList.contains('hidden')) renderShop(); } }; })();
   // ad / screenshot helper: ?level=N  ?layout=pyramid[&seed=3]  ?daily=YYYY-MM-DD  ?bg=id  ?tiles=id  ?faces=id  ?music=id  ?clean=1 (hides the how-to-play box)  ?big=1
   var Q = {}; location.search.replace(/[?&](\w+)=([^&]*)/g, function (m, a, b) { Q[a] = decodeURIComponent(b); });
+  if (STORE_LIVE) Q = {}; // store builds ignore every URL helper (no free unlocks, no test shortcuts)
   if (Q.bg && MMS.BACKGROUNDS[Q.bg]) cur.bg = Q.bg; if (Q.tiles && MMS.TILES[Q.tiles]) cur.tiles = Q.tiles; if (Q.faces && FACE_ITEMS[Q.faces]) cur.faces = Q.faces; if (Q.music && MMusic.PACKS[Q.music]) cur.music = Q.music;
   var QALL = !!(Q.bg || Q.tiles || Q.faces || Q.music); if (Q.big) big = Q.big === '1';
   if (window.FX) FX.init();
