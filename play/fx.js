@@ -1,7 +1,7 @@
 // Tileberry visual effects: ambient drifting particles behind the game, and sparkle bursts on matches.
 (function (root) {
   var amb = null, spk = null, actx, sctx, W = 0, H = 0, dpr = 1, kind = null, parts = [], bursts = [], running = false, last = 0;
-  var reduce = false; try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var calmMode = false, reduce = false; try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function size() { dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; [amb, spk].forEach(function (c) { if (!c) return; c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px'; }); if (actx) actx.setTransform(dpr, 0, 0, dpr, 0, 0); if (sctx) sctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
   var KINDS = {
@@ -42,8 +42,9 @@
       document.addEventListener('visibilitychange', function () { if (document.hidden) { running = false; } else if (!running) { running = true; last = performance.now(); requestAnimationFrame(step); } });
       running = true; last = performance.now(); requestAnimationFrame(step);
     },
-    ambient: function (k) { kind = k; build(); },
-    burst: function (x, y, n, colors) { if (!sctx) return; colors = colors || ['#ffd966', '#fff6c2', '#ff9ec7', '#ffffff', '#9be3ff']; n = reduce ? Math.round(n / 2) : n; for (var i = 0; i < n; i++) { var a = rnd(0, 6.283), sp = rnd(70, 230); bursts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 90, size: rnd(3.5, 8), c: colors[Math.floor(rnd(0, colors.length))], r: rnd(0, 6), vr: rnd(-6, 6), life: rnd(.55, 1.05), max: 1.05 }); } },
+    setCalm: function (v) { calmMode = !!v; },
+    ambient: function (k) { kind = calmMode ? null : k; build(); },
+    burst: function (x, y, n, colors) { if (!sctx || calmMode) return; colors = colors || ['#ffd966', '#fff6c2', '#ff9ec7', '#ffffff', '#9be3ff']; n = reduce ? Math.round(n / 2) : n; for (var i = 0; i < n; i++) { var a = rnd(0, 6.283), sp = rnd(70, 230); bursts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 90, size: rnd(3.5, 8), c: colors[Math.floor(rnd(0, colors.length))], r: rnd(0, 6), vr: rnd(-6, 6), life: rnd(.55, 1.05), max: 1.05 }); } },
     float: function (x, y, text, cls) { var d = document.createElement('div'); d.className = 'floaty ' + (cls || ''); d.textContent = text; d.style.left = x + 'px'; d.style.top = y + 'px'; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 1100); }
   };
   root.FX = FX;

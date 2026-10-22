@@ -69,7 +69,13 @@
   body.dark h1 { color:#e6f6ea; } body.dark .sub, body.dark .tiny, body.dark .msg { color:#c3d6c8; } body.dark .seg button { color:#b9cdbf; } body.dark .seg button.on { color:#fff; }
   .chips { display:flex; justify-content:center; margin:10px 0 2px; }
   .chip { border:0; border-radius:999px; padding:9px 16px; background:rgba(255,255,255,.85); box-shadow:0 3px 10px rgba(40,90,60,.15); font:inherit; font-weight:800; font-size:13.5px; color:var(--ink); cursor:pointer; }
-  .chip.on { background:linear-gradient(135deg,#59b176,#3f8f5b); color:#fff; }
+  body.easy .tile:not(.blocked) { outline:3px solid rgba(242,182,50,.95); outline-offset:-1px; }
+  body.easy .tile.blocked { filter:brightness(.6) saturate(.45) !important; }
+  body.easy .tiny, body.easy .msg, body.easy .info { font-size:17px !important; }
+  body.easy .titles .sub { font-size:14.5px; } body.easy .scard .nm { font-size:17px; } body.easy .scard .bl { font-size:14px; }
+  body.easy .sbtn { font-size:15.5px; } body.easy .btn { font-size:18px; } body.easy .seg button { font-size:17px; } body.easy .chip { font-size:15.5px; }
+  body.calm #ambient, body.calm #sparks { display:none; }
+  .chip.on { background:linear-gradient(135deg,#e0558f,#8a45c4); color:#fff; }
   .club { margin-top:10px; padding:16px; border-radius:22px; background:linear-gradient(150deg,#fff8e0,#ffe9a8); border:2px solid #f2d46b; box-shadow:0 10px 22px rgba(120,90,10,.18); }
   .club h3 { margin:0 0 4px; font-size:21px; font-weight:900; color:#7a5a05; }
   .club p { margin:0 0 10px; font-size:14px; font-weight:700; color:#6d5a2a; line-height:1.4; }
@@ -163,7 +169,7 @@
     <button class="tool hintb" id="hint"><span class="i">💡</span>Hint</button>
     <button class="tool" id="shuf"><span class="i">🔀</span>Shuffle</button>
   </div>
-  <div class="chips"><button class="chip" id="musicChip">🎵 Music: off</button></div>
+  <div class="chips"><button class="chip" id="musicChip">🎵 Music: off</button><button class="chip" id="easyChip">👓 Easy view: off</button><button class="chip" id="calmChip">🌿 Calm effects: off</button></div>
   <div class="msg" id="msg"></div>
 </div>
 <div id="shopPane" class="hidden">
@@ -185,13 +191,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792647240"></script>
-<script src="fx.js?v=1792647240"></script>
-<script src="scenery.js?v=1792647240"></script>
-<script src="scenery2.js?v=1792647240"></script>
-<script src="faces.js?v=1792647240"></script>
-<script src="states.js?v=1792647240"></script>
-<script src="music.js?v=1792647240"></script>
+<script src="engine.js?v=1792699760"></script>
+<script src="fx.js?v=1792699760"></script>
+<script src="scenery.js?v=1792699760"></script>
+<script src="scenery2.js?v=1792699760"></script>
+<script src="faces.js?v=1792699760"></script>
+<script src="states.js?v=1792699760"></script>
+<script src="music.js?v=1792699760"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -428,6 +434,11 @@
   }
   function applyTiles(id) { $('boardWrap').style.cssText += ';'; var w = $('boardWrap'); ['--tbg', '--tbd', '--s1', '--s2', '--ff'].forEach(function (v) { w.style.removeProperty(v); }); (MMS.TILE_CSS[id] || '').split(';').forEach(function (d) { var i = d.indexOf(':'); if (i > 0) w.style.setProperty(d.slice(0, i).trim(), d.slice(i + 1).trim()); }); if (cur.faces !== 'classic') w.style.removeProperty('--ff'); }
   function applyAll() { applyBg(cur.bg); applyTiles(cur.tiles); MMusic.setPack(cur.music); }
+  var easy = store.get('easy', false), calm = store.get('calm', false);
+  try { if (store.get('calm', null) === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches) calm = true; } catch (e) {}
+  function applyEasy() { document.body.classList.toggle('easy', easy); document.body.classList.toggle('calm', calm); $('easyChip').classList.toggle('on', easy); $('calmChip').classList.toggle('on', calm); $('easyChip').textContent = '👓 Easy view: ' + (easy ? 'on' : 'off'); $('calmChip').textContent = '🌿 Calm effects: ' + (calm ? 'on' : 'off'); if (window.FX) { FX.setCalm(calm); try { FX.ambient(MMS.BACKGROUNDS[cur.bg].fx); } catch (e) {} } }
+  $('easyChip').onclick = function () { easy = !easy; store.set('easy', easy); applyEasy(); if (G && !$('play').classList.contains('hidden')) render(); };
+  $('calmChip').onclick = function () { calm = !calm; store.set('calm', calm); applyEasy(); };
   function updateChip() { var c = $('musicChip'); c.classList.toggle('on', MMusic.on); c.textContent = MMusic.on ? '🎵 ' + MMusic.PACKS[MMusic.pack].name : '🎵 Music: off'; }
   $('musicChip').onclick = function () { if (MMusic.on) { MMusic.stop(); store.set('musicOn', false); } else { if (muted) { muted = false; store.set('muted', false); $('mute').textContent = '🔊'; } MMusic.setPack(cur.music); MMusic.start(); store.set('musicOn', true); } updateChip(); };
   function miniTiles() { return '<div class="mini">' + faceSvgFor('classic', 4) + '</div><div class="mini">' + faceSvgFor('classic', 27) + '</div><div class="mini">' + faceSvgFor('classic', 31) + '</div>'; }
@@ -526,7 +537,7 @@
   if (Q.bg && MMS.BACKGROUNDS[Q.bg]) cur.bg = Q.bg; if (Q.tiles && MMS.TILES[Q.tiles]) cur.tiles = Q.tiles; if (Q.faces && FACE_ITEMS[Q.faces]) cur.faces = Q.faces; if (Q.music && MMusic.PACKS[Q.music]) cur.music = Q.music;
   var QALL = !!(Q.bg || Q.tiles || Q.faces || Q.music); if (Q.big) big = Q.big === '1';
   if (window.FX) FX.init();
-  applyAll(); updateChip();
+  applyAll(); updateChip(); applyEasy();
   $('tabDaily').onclick = showDaily; $('tabLevels').onclick = showLevels;
   addEventListener('resize', function () { if (G && !$('play').classList.contains('hidden')) render(); });
   showStreak();
