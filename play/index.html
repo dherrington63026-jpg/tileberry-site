@@ -139,6 +139,9 @@
   .seg button { color:#8566b8; }
   .iconbtn.on { background:linear-gradient(135deg,#e0558f,#8a45c4); border-color:#8a45c4; box-shadow:0 3px 10px rgba(122,63,184,.5); }
   .seg button.on, .btn.pri { background:linear-gradient(135deg,#e0558f,#8a45c4); color:#fff; box-shadow:0 5px 12px rgba(122,63,184,.4); }
+  body { padding-left:6px; padding-right:6px; }
+  .stage { padding:5px !important; border-width:1px !important; }
+  .tile .face { inset:3% 4% !important; padding:1% 2% !important; }
   .titles .sub { color:#7a3fb8; font-weight:700; text-shadow:none; }
   .titles h1 { background:linear-gradient(90deg,#d6366c,#7a3fb8); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:none; filter:none; }
   .seg { background:rgba(255,255,255,.55); box-shadow:0 8px 20px rgba(20,50,70,.18); backdrop-filter:blur(6px); }
@@ -191,13 +194,13 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1793114119"></script>
-<script src="fx.js?v=1793114119"></script>
-<script src="scenery.js?v=1793114119"></script>
-<script src="scenery2.js?v=1793114119"></script>
-<script src="faces.js?v=1793114119"></script>
-<script src="states.js?v=1793114119"></script>
-<script src="music.js?v=1793114119"></script>
+<script src="engine.js?v=1793114589"></script>
+<script src="fx.js?v=1793114589"></script>
+<script src="scenery.js?v=1793114589"></script>
+<script src="scenery2.js?v=1793114589"></script>
+<script src="faces.js?v=1793114589"></script>
+<script src="states.js?v=1793114589"></script>
+<script src="music.js?v=1793114589"></script>
 <script src="store-bridge.js"></script>
 <script>
 (function () {
@@ -278,9 +281,9 @@
 
   // ---------- specs ----------
   var big = store.get('big', true);
-  var ORDER_BIG = ['beginner', 'beginner', 'beginner', 'steps', 'steps', 'steps', 'diamond', 'diamond', 'crossc', 'crossc', 'pyramid', 'pyramid', 'tower', 'tower', 'blossom', 'blossom'];
-  var CYCLE_BIG = ['pyramid', 'tower', 'crossc', 'blossom', 'diamond'];
-  var DAY_BIG = { 0: 'blossom', 1: 'steps', 2: 'diamond', 3: 'crossc', 4: 'pyramid', 5: 'tower', 6: 'blossom' };
+  var ORDER_BIG = ['beginner', 'beginner', 'beginner', 'steps6', 'steps6', 'steps6', 'diamond6', 'diamond6', 'cross6', 'cross6', 'pyramid6', 'pyramid6', 'tower', 'tower', 'blossom', 'blossom'];
+  var CYCLE_BIG = ['pyramid6', 'tower', 'cross6', 'blossom', 'diamond6'];
+  var DAY_BIG = { 0: 'blossom', 1: 'steps6', 2: 'diamond6', 3: 'cross6', 4: 'pyramid6', 5: 'tower', 6: 'blossom' };
   var ORDER = ['beginner', 'beginner', 'beginner', 'steps', 'steps', 'steps', 'diamond', 'diamond', 'cross', 'cross', 'pyramid', 'pyramid', 'pyramid', 'fortress', 'fortress', 'garden', 'garden', 'grand'];
   var CYCLE = ['pyramid', 'cross', 'fortress', 'garden', 'diamond', 'grand'];
   function today() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -317,7 +320,7 @@
   }
   function render() {
     var wrap = $('boardWrap'); wrap.innerHTML = ''; els = [];
-    var b = layoutBox(), W = wrap.clientWidth || 340, pad = 12, k = .28, ar = 1.28;
+    var b = layoutBox(), W = wrap.clientWidth || 340, pad = 6, k = .28, ar = 1.28;
     var u = Math.min((W - pad * 2) / (b.maxX + k * b.maxZ), (window.innerHeight * (big ? .66 : .56)) / (b.maxY * ar + k * b.maxZ));
     var dz = k * u, tw = 2 * u, th = 2 * u * ar;
     var bw = b.maxX * u + b.maxZ * dz + pad * 2, bh = b.maxY * u * ar + b.maxZ * dz + pad * 2;
