@@ -36,6 +36,8 @@
     pyramid:  { name: 'Pyramid', build: function () { return L().rect(0, 0, 0, 8, 5).rect(1, 1, 1, 6, 3).rect(2, 2, 2, 4, 1); } },
     cross:    { name: 'Cross', build: function () {
       var l = L().rect(0, 0, 2, 12, 2); l.rect(0, 4, 0, 4, 2).rect(0, 4, 4, 4, 2); l.rect(1, 4, 2, 4, 2); return l; } },
+    crossc:   { name: 'Cross', build: function () {
+      var l = L().rect(0, 0, 2, 8, 2); l.rect(0, 2, 0, 4, 2).rect(0, 2, 4, 4, 2); l.rect(1, 2, 2, 4, 2); return l; } },
     fortress: { name: 'Fortress', build: function () { return L().rect(0, 0, 0, 10, 6).rect(1, 1, 1, 8, 4).rect(2, 2, 2, 6, 2); } },
     garden:   { name: 'Garden', build: function () { return L().rect(0, 0, 0, 12, 6, corners).rect(1, 1, 1, 10, 4, corners).rect(2, 2, 2, 8, 2); } },
     tower:    { name: 'Tower', build: function () { return L().rect(0, 0, 0, 6, 7).rect(1, 1, 1, 4, 5).rect(2, 2, 2, 2, 3); } },

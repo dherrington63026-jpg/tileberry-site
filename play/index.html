@@ -191,13 +191,14 @@
 <canvas id="sparks"></canvas>
 <canvas id="confetti"></canvas>
 
-<script src="engine.js?v=1792699760"></script>
-<script src="fx.js?v=1792699760"></script>
-<script src="scenery.js?v=1792699760"></script>
-<script src="scenery2.js?v=1792699760"></script>
-<script src="faces.js?v=1792699760"></script>
-<script src="states.js?v=1792699760"></script>
-<script src="music.js?v=1792699760"></script>
+<script src="engine.js?v=1793114119"></script>
+<script src="fx.js?v=1793114119"></script>
+<script src="scenery.js?v=1793114119"></script>
+<script src="scenery2.js?v=1793114119"></script>
+<script src="faces.js?v=1793114119"></script>
+<script src="states.js?v=1793114119"></script>
+<script src="music.js?v=1793114119"></script>
+<script src="store-bridge.js"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -277,9 +278,9 @@
 
   // ---------- specs ----------
   var big = store.get('big', true);
-  var ORDER_BIG = ['beginner', 'beginner', 'beginner', 'steps', 'steps', 'steps', 'diamond', 'diamond', 'cross', 'cross', 'pyramid', 'pyramid', 'tower', 'tower', 'blossom', 'blossom'];
-  var CYCLE_BIG = ['pyramid', 'tower', 'cross', 'blossom', 'diamond'];
-  var DAY_BIG = { 0: 'blossom', 1: 'steps', 2: 'diamond', 3: 'cross', 4: 'pyramid', 5: 'tower', 6: 'blossom' };
+  var ORDER_BIG = ['beginner', 'beginner', 'beginner', 'steps', 'steps', 'steps', 'diamond', 'diamond', 'crossc', 'crossc', 'pyramid', 'pyramid', 'tower', 'tower', 'blossom', 'blossom'];
+  var CYCLE_BIG = ['pyramid', 'tower', 'crossc', 'blossom', 'diamond'];
+  var DAY_BIG = { 0: 'blossom', 1: 'steps', 2: 'diamond', 3: 'crossc', 4: 'pyramid', 5: 'tower', 6: 'blossom' };
   var ORDER = ['beginner', 'beginner', 'beginner', 'steps', 'steps', 'steps', 'diamond', 'diamond', 'cross', 'cross', 'pyramid', 'pyramid', 'pyramid', 'fortress', 'fortress', 'garden', 'garden', 'grand'];
   var CYCLE = ['pyramid', 'cross', 'fortress', 'garden', 'diamond', 'grand'];
   function today() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -364,7 +365,11 @@
   };
   $('shuf').onclick = function () {
     if (done) return; clearHint(); if (sel !== -1) { els[sel].classList.remove('sel'); sel = -1; }
-    if (MJ.reshuffle(G, Date.now() & 0xffffff)) { shuffles++; G.tiles.forEach(function (t, i) { if (!G.gone[i]) els[i].querySelector('.face').innerHTML = faceSvg(t.face); }); $('msg').textContent = 'Shuffled. Every tile can still be matched.'; refresh(); }
+    var seed0 = Date.now() & 0xffffff, gave = 0, ok = MJ.reshuffle(G, seed0);
+    // If the tiles left can no longer all be matched (for example the last two are stacked), give back the last moves one at a time until they can.
+    while (!ok && MJ.undo(G)) { gave++; ok = MJ.reshuffle(G, seed0 + gave); }
+    if (ok) { shuffles++; G.tiles.forEach(function (t, i) { if (!G.gone[i]) els[i].querySelector('.face').innerHTML = faceSvg(t.face); }); $('msg').textContent = gave ? 'Shuffled. We put back ' + (gave * 2) + ' tiles so every tile can be matched.' : 'Shuffled. Every tile can still be matched.'; refresh(); }
+    else { refresh(); $('msg').textContent = 'Could not shuffle. Tap Undo, then try again.'; }
   };
 
   function win() {
@@ -418,12 +423,11 @@
   var TBL = function (k) { return k === 'bg' ? MMS.BACKGROUNDS : k === 'tiles' ? MMS.TILES : k === 'faces' ? FACE_ITEMS : MMusic.PACKS; };
   if (!TBL('bg')[cur.bg]) cur.bg = 'meadow'; if (!TBL('tiles')[cur.tiles]) cur.tiles = 'classic'; if (!TBL('music')[cur.music]) cur.music = 'meadow'; if (!FACE_ITEMS[cur.faces]) cur.faces = 'classic';
   var STORE_LIVE = false; // the iPhone build sets this to true (real purchases); the web version stays "coming soon"
-  var PFX = 'com.huezelgames.tileberry.', NP = null, prices = {};
-  try { if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) NP = (Capacitor.Plugins && Capacitor.Plugins.NativePurchases) || Capacitor.registerPlugin('NativePurchases'); } catch (e) {}
-  var live = !!NP && STORE_LIVE, isAndroid = false; try { isAndroid = !!NP && Capacitor.getPlatform() === 'android'; } catch (e) {}
+  var PFX = 'com.huezelgames.tileberry.', prices = {};
+  var live = !!window.PBStore && STORE_LIVE; // PBStore = RevenueCat bridge (store-bridge.js); stays undefined on the web and until the RevenueCat keys exist
   function clubOn() { return !!(own.life || (own.clubUntil && own.clubUntil > Date.now())); }
   function pidOf(id) { return PFX + id.replace(/-/g, '_'); }
-  function priceTxt(id, usd) { return prices[pidOf(id)] || ('$' + usd.toFixed(2)); }
+  function priceTxt(id, usd) { return prices[keyOf(id)] || ('$' + usd.toFixed(2)); }
   function owned(k, id) { var it = TBL(k)[id]; return !!(it.free || own.all || clubOn() || (typeof QALL !== 'undefined' && QALL) || own[k + ':' + id]); }
   function applyBg(id) {
     var b = MMS.BACKGROUNDS[id];
@@ -449,7 +453,7 @@
   function renderShop() {
     var grid = $('shopGrid'); grid.innerHTML = '';
     $('clubHead').textContent = clubOn() ? '🌿 You are in Tileberry Club ✓' : '🌿 Tileberry Club';
-    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[pidOf(p[0])] ? prices[pidOf(p[0])] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
+    [['club-monthly', 'Monthly', '$2.99'], ['club-yearly', 'Yearly', '$19.99 · save 44%']].forEach(function (p) { var b = document.querySelector('.plan[data-id="' + p[0] + '"]'); if (b) b.innerHTML = p[1] + '<small>' + (prices[keyOf(p[0])] ? prices[keyOf(p[0])] + (p[0] === 'club-yearly' ? ' · save 44%' : p[0] === 'club-lifetime' ? ' once' : '') : p[2]) + '</small>'; });
     $('clubFine').style.display = live ? '' : 'none'; $('restoreBtn').style.display = live ? '' : 'none';
     Array.prototype.forEach.call($('shopTabs').children, function (b) { b.classList.toggle('on', b.dataset.k === shopKind); });
     var k = shopKind, tbl = TBL(k), now = new Date();
@@ -482,37 +486,42 @@
   }
   function note(title, text) { var d = $('doorOv'); d.querySelector('h3').textContent = title; d.querySelector('p').textContent = text; d.classList.remove('hidden'); }
   function afterBuy() { store.set('own', own); if (previewing && owned(previewing.k, previewing.id)) { var p = previewing; previewing = null; $('prevBar').classList.add('hidden'); equip(p.k, p.id); } if (!$('shopPane').classList.contains('hidden')) renderShop(); }
-  function applyTx(t) {
-    var id = String((t && t.productIdentifier) || ''); if (id.indexOf(PFX) !== 0) return false; id = id.slice(PFX.length).replace('_', '-');
-    if (id === 'club-lifetime') { own.life = true; return true; }
-    if (id === 'club-monthly' || id === 'club-yearly') { var until = t.expirationDate ? Date.parse(t.expirationDate) : (t.isActive !== false ? Date.now() + 3 * 864e5 : 0); if (t.isActive === false || !until || until < Date.now()) return false; if (until > (own.clubUntil || 0)) own.clubUntil = until; return true; }
-    var m = id.indexOf('-'); if (m < 1) return false; own[id.slice(0, m) + ':' + id.slice(m + 1)] = true; return true;
+  function keyOf(id) { return id.replace(/-/g, '_'); }
+  // the bridge returns what the player owns as ids WITHOUT the store prefix: bg_lake, tiles_jade, music_piano, ... and 'club' while a Club subscription is active
+  function applyOwned(ids) {
+    var n = 0, club = false; ids = ids || [];
+    ids.forEach(function (p) {
+      if (p === 'club') { club = true; return; }
+      var m = p.indexOf('_'); if (m < 1) return;
+      var k = p.slice(0, m), id = p.slice(m + 1); if (!TBL(k) || !TBL(k)[id]) return;
+      own[k + ':' + id] = true; n++;
+    });
+    if (club) own.clubUntil = Date.now() + 3 * 864e5; else own.clubUntil = 0; // re-checked at every start and restore; 3 days of grace if the store is unreachable
+    store.set('own', own); return n + (club ? 1 : 0);
   }
-  async function syncPurchases() {
-    if (!live) return 0; var n = 0;
-    try { own.clubUntil = 0; var types = isAndroid ? ['inapp', 'subs'] : ['inapp'];
-      for (var i = 0; i < types.length; i++) { var r = await NP.getPurchases({ productType: types[i] }); (r.purchases || []).forEach(function (t) { if (applyTx(t)) n++; }); }
-      store.set('own', own); } catch (e) {}
-    return n;
+  function storeReady() { return window.PBStore && window.PBStore.owned; }
+  function syncPurchases() {
+    if (!live) return Promise.resolve(0);
+    return window.PBStore.owned().then(applyOwned).catch(function () { return 0; });
   }
-  async function storeInit() {
+  function storeInit() {
     if (!live) return;
-    try { var b = await NP.isBillingSupported(); if (!b || !b.isBillingSupported) { live = false; return; }
-      var ids = ['club-monthly', 'club-yearly', 'club-lifetime']; ['bg', 'tiles', 'faces', 'music'].forEach(function (k) { Object.keys(TBL(k)).forEach(function (id) { if (!TBL(k)[id].free) ids.push(k + '-' + id); }); });
-      var r = await NP.getProducts({ productIdentifiers: ids.map(pidOf), productType: 'inapp' }); (r.products || []).forEach(function (p) { if (p.priceString) prices[p.identifier] = p.priceString; });
-      if (isAndroid) { try { var r2 = await NP.getProducts({ productIdentifiers: ['club-monthly', 'club-yearly'].map(pidOf), productType: 'subs' }); (r2.products || []).forEach(function (p) { if (p.priceString) prices[p.identifier] = p.priceString; }); } catch (e) {} }
-      try { NP.addListener('transactionUpdated', function (t) { if (applyTx(t)) afterBuy(); }); } catch (e) {}
-      await syncPurchases(); if (!$('shopPane').classList.contains('hidden')) renderShop();
-    } catch (e) {}
+    if (window.PBStore.prices) window.PBStore.prices().then(function (pr) { prices = pr || {}; if (!$('shopPane').classList.contains('hidden')) renderShop(); }).catch(function () {});
+    syncPurchases().then(function () { if (!$('shopPane').classList.contains('hidden')) renderShop(); });
   }
-  async function nativeBuy(id) {
-    var sub = id === 'club-monthly' || id === 'club-yearly', t = null;
-    try { var opt = { productIdentifier: pidOf(id), productType: sub ? 'subs' : 'inapp', quantity: 1 }; if (isAndroid && sub) opt.planIdentifier = id === 'club-monthly' ? 'monthly' : 'yearly'; t = await NP.purchaseProduct(opt); } catch (e) { return; }
-    if (t && applyTx(t)) { afterBuy(); note('Thank you!', 'Your purchase is unlocked. Enjoy!'); }
-    else { await syncPurchases(); afterBuy(); }
+  function nativeBuy(id) {
+    window.PBStore.buy(keyOf(id)).then(function (ids) {
+      applyOwned(ids); afterBuy();
+      var ok = id.indexOf('club-') === 0 ? clubOn() : !!own[id.replace('-', ':')];
+      if (ok) note('Thank you!', 'Your purchase is unlocked. Enjoy!'); else note('Not finished', 'The purchase was not completed. You were not charged.');
+    }).catch(function () { /* cancelled or no connection: nothing to do */ });
   }
-  function buyTap(id) { track('buytap', { l: id }); if (live && id.indexOf('notify-') !== 0) { nativeBuy(id); return; } note('Coming soon!', 'Tileberry is still being built, so purchases are not open yet. We counted your tap. It tells us what to make first. Thank you!'); }
-  $('restoreBtn').onclick = async function () { try { await NP.restorePurchases(); } catch (e) {} var n = await syncPurchases(); afterBuy(); note(n ? 'Purchases restored' : 'Nothing to restore', n ? 'We found ' + n + ' purchase' + (n === 1 ? '' : 's') + ' on your account.' : 'We did not find earlier purchases on this account.'); };
+  function buyTap(id) { track('buytap', { l: id }); if (live && id.indexOf('notify-') !== 0) { nativeBuy(id); return; } note(STORE_LIVE ? 'Not available yet' : 'Coming soon!', STORE_LIVE ? 'The store is not available right now. Please try again later.' : 'Tileberry is still being built, so purchases are not open yet. We counted your tap. It tells us what to make first. Thank you!'); }
+  $('restoreBtn').onclick = function () {
+    if (!live) return;
+    window.PBStore.restore().then(function (ids) { var n = applyOwned(ids); afterBuy(); note(n ? 'Purchases restored' : 'Nothing to restore', n ? 'We found ' + n + ' purchase' + (n === 1 ? '' : 's') + ' on your account.' : 'We did not find earlier purchases on this account.'); })
+      .catch(function () { note('Could not reach the store', 'Check your internet connection and try again.'); });
+  };
   storeInit();
   $('doorOk').onclick = function () { $('doorOv').classList.add('hidden'); };
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.plan'); if (b) buyTap(b.dataset.id); });
@@ -535,7 +544,7 @@
   var Q = {}; location.search.replace(/[?&](\w+)=([^&]*)/g, function (m, a, b) { Q[a] = decodeURIComponent(b); });
   if (STORE_LIVE) Q = {}; // store builds ignore every URL helper (no free unlocks, no test shortcuts)
   if (Q.bg && MMS.BACKGROUNDS[Q.bg]) cur.bg = Q.bg; if (Q.tiles && MMS.TILES[Q.tiles]) cur.tiles = Q.tiles; if (Q.faces && FACE_ITEMS[Q.faces]) cur.faces = Q.faces; if (Q.music && MMusic.PACKS[Q.music]) cur.music = Q.music;
-  var QALL = !!(Q.bg || Q.tiles || Q.faces || Q.music); if (Q.big) big = Q.big === '1';
+  var QALL = !!(Q.bg || Q.tiles || Q.faces || Q.music); if (Q.big) big = Q.big === '1'; if (Q.easy === '1') { easy = true; } if (Q.calm === '1') { calm = true; }
   if (window.FX) FX.init();
   applyAll(); updateChip(); applyEasy();
   $('tabDaily').onclick = showDaily; $('tabLevels').onclick = showLevels;
@@ -546,6 +555,7 @@
     $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(qs2);
   } else if (!store.get('tut', 0)) { $('tabLevels').classList.add('on'); $('tabDaily').classList.remove('on'); start(levelSpec(0)); } else showDaily();
   if (Q.clean) $('cap').classList.add('hidden');
+  if (Q.autoplay && !STORE_LIVE) { setTimeout(function () { (function step() { var p = MJ.findPair(G); if (!p) return; tap(p[0]); setTimeout(function () { tap(p[1]); setTimeout(step, 800); }, 500); })(); }, 1800); } // ad-video helper: plays the board by itself (web/test only)
   if (Q.tab === 'shop') { if (Q.shopk && TBL(Q.shopk)) shopKind = Q.shopk; showShop(); } else if (Q.tab === 'daily') showDaily();
   window.__mm = { MJ: MJ, get g() { return G; }, tap: tap, els: function () { return els; }, levelSpec: levelSpec, start: start };
 })();
